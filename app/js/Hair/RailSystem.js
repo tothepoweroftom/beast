@@ -28,7 +28,7 @@ export default class RailSystem {
 
         this.vertices.forEach((anchor, i)=>{
             // console.log(i)
-            if(i%3===0) {
+            if(i%5===0) {
                 var p = new Two.Circle(0, 0, 10 / 4);
                 p.fill = "green"
     
@@ -45,6 +45,18 @@ export default class RailSystem {
   
         })
 
+    }
+
+    togglePoints(debug) {
+        if(debug) {
+            this.points.forEach((point)=>{
+                point.visible = true
+            })
+        } else {
+            this.points.forEach((point)=>{
+                point.visible = false
+            })
+        }
     }
 
     resize() {
@@ -76,6 +88,8 @@ export default class RailSystem {
         })
         // console.log(this.distance)
         this.points[this.highlighted].fill = "yellow"
+
+        return this.points[this.highlighted].position.distanceTo(anchor)
     }
 
 

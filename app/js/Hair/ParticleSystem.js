@@ -43,6 +43,8 @@ export default class ParticleSystem {
         // this.getAbsolutePoints()
         this.originalLengths = []
         this.lineDistance = 0
+        this.growthConstaint = 10;
+        this.anchor;
      
 
 
@@ -58,6 +60,7 @@ export default class ParticleSystem {
     }
 
     updateMouseLine(anchor, mouse) {
+        this.anchor = anchor
 
         this.mouseLine.vertices[0].x = anchor.x
         this.mouseLine.vertices[0].y = anchor.y
@@ -160,32 +163,40 @@ export default class ParticleSystem {
 
 
     innerCircleBehaviour(mouse, time) {
-        for (let i = this.rules.start; i < this.displayed.vertices.length - this.rules.end; i++) {
+        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
 
-            if ((i) % 2 != 0 && !this.rules.exceptions.includes(i)) {
-
-
-
+            if ((i) % 2 != 0) {
 
                 let v = this.displayed.vertices[i]
                 this.oldPos[i] = v
+                this.difference = noise.noise2(time * v.x, time * v.y)
                 let o = this.origin.vertices[i]
+                o.addSelf(this.shapeOrigin)
+                this.lineDistance = distanceToLineSegment(this.anchor.x, this.anchor.y, mouse.x, mouse.y , o.x, o.y)
+
+                this.lineDistance = this.clamp(this.lineDistance, 0, 30)
+                this.lineDistance = this.map_range(this.lineDistance, 0, 30, 90, 0)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint) * Math.sin(this.lineDistance*conversion)
+
+                o.subSelf(this.shapeOrigin)
+    
+
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 15), this.oldPos[i].x, 0.2);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 15), this.oldPos[i].y, 0.2);
+
+                this.oldPos[i] = v
 
 
 
 
 
 
-
-
-
-                // ////console("distance", v.distanceTo(o))
             }
         }
     }
 
     outerCircleBehaviour(mouse, time) {
-        for (let i = this.rules.start; i < this.displayed.vertices.length - this.rules.end; i++) {
+        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
 
             if ((i + 1) % 2 === 0 && !this.rules.exceptions.includes(i)) {
 
@@ -207,19 +218,26 @@ export default class ParticleSystem {
     }
 
     standbyBehaviour(mouse, time) {
-        for (let i = this.rules.start; i < this.displayed.vertices.length - this.rules.end; i++) {
+        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
 
             if ((i) % 2 != 0) {
-                this.amplitude = 5.0
 
                 let v = this.displayed.vertices[i]
                 this.oldPos[i] = v
-                this.difference = noise.noise2(time * v.x, time * v.y) * this.amplitude
+                this.difference = noise.noise2(time * v.x, time * v.y)*5
                 let o = this.origin.vertices[i]
+                o.addSelf(this.shapeOrigin)
+                this.lineDistance = distanceToLineSegment(this.anchor.x, this.anchor.y, mouse.x, mouse.y , o.x, o.y)
 
+                this.lineDistance = this.clamp(this.lineDistance, 0, 30)
+                this.lineDistance = this.map_range(this.lineDistance, 0, 30, 90, 0)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint*0.33) * Math.sin(this.lineDistance*conversion)
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].x, 0.2);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].y, 0.2);
+                o.subSelf(this.shapeOrigin)
+    
+
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].x, 0.52);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].y, 0.52);
 
                 this.oldPos[i] = v
 
@@ -234,39 +252,42 @@ export default class ParticleSystem {
 
 
 
-    run(mouse, time, controls) {
+    run(mouse,time, growthConstaints, debug) {
+
+        this.growthConstaint = growthConstaints[this.id]
 
    
 
 
 
-        if (this.tweening === false) {
-
+        if (this.tweening === false && this.anchor) {
+            if(debug) {
                 if(mouse.distanceTo(this.shapeOrigin)<this.influenceRadius){
                     this.mouseLine.visible = true
                 } else {
                     this.mouseLine.visible = false
+    
+                }
+            } else {
+                this.mouseLine.visible = false
+            }
+          
+ 
+            this.theta = Math.atan2((mouse.y - this.anchor.y), (mouse.x -  this.anchor.x))
+            this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
+
+                // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
+                if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius) {
+
+                    this.innerCircleBehaviour(mouse, time)
+
+
+                } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius) {
+
+                    this.standbyBehaviour(mouse, time)
 
                 }
- 
-            // this.theta = Math.atan2((mouse.y + this.shapeOrigin.y), (mouse.x + this.shapeOrigin.x))
-            // this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
-            // if (this.rules) {
-
-            //     // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
-            //     if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius * 0.5 || this.rules.outerHair === true) {
-
-            //         this.innerCircleBehaviour(mouse, time)
-
-
-            //     } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius * 0.5 && this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius && this.rules.outerHair == false) {
-            //         this.outerCircleBehaviour(mouse, time)
-            //     } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius) {
-
-            //         this.standbyBehaviour(mouse, time)
-
-            //     }
-            // }
+            
         }
 
    

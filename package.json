@@ -12,9 +12,21 @@
     "postcss-modules": "^1.4.1",
     "two.js": "^0.7.0-stable.1"
   },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "autoprefixer": "^9.7.5",
-    "cssnano": "^4.1.8",
+    "babel-cli": "^6.26.0",
+    "cssnano": "^4.1.10",
     "sass": "^1.16.1"
+  },
+  "scripts": {
+    "start": "parcel watch index.html",
+    "build": "parcel build index.html"
   }
 }

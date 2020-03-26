@@ -14,7 +14,7 @@ export default function TwoJSManager() {
     this.mouseControl = true;
     this.growHairs = 0.1
     this.angle = 0.0
-    this.debug = true;
+    this.debug = false;
     this.logoScale = 1.0
 
 
@@ -61,8 +61,13 @@ export default function TwoJSManager() {
     let rects = []
     let hairSystems = []
     let railSystems = []
+    let base;
 
     this.anchors = {}
+
+    this.growthLimits = {
+
+    }
 
 
 
@@ -108,6 +113,8 @@ export default function TwoJSManager() {
 
        
   
+        } else if(logo.children[i].id.includes("base")) {
+            base = logo.children[i]
         }
     }
 
@@ -183,10 +190,17 @@ export default function TwoJSManager() {
             })
             hairSystems.forEach((hair, index) => {
                 //////console.log(hair)
+                hair.mouseLine.visible = false;
+
                 hair.path.fill = "#02f768"
-                logo.children[0].fill = "#02f768"
+            })
+
+            railSystems.forEach((rail)=>{
+                rail.togglePoints(false)
             })
             // mouseLine.visible = false
+            base.fill = "#02f768"
+
             this.logoRect.visible = false
 
         } else if (this.debug && ball.visible === false) {
@@ -197,39 +211,41 @@ export default function TwoJSManager() {
                 rect.visible = true
             })
 
+            railSystems.forEach((rail)=>{
+                rail.togglePoints(true)
+            })
+
             hairSystems.forEach((hair, index) => {
+                hair.mouseLine.visible = true;
                 ////console.log(hair)
                 hair.path.fill = colorClasses[index]
-                logo.children[0].fill = "#ffffff"
             })
+            base.fill = "#ffffff"
+
+
 
             // mouseLine.visible = true
             this.logoRect.visible = true
 
         }
 
+        railSystems.forEach((rail,i)=>{
+            this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
+
+        })
+
 
 
         for (let i = 0; i < hairSystems.length; i++) {
-            hairSystems[i].run(this.mouse, elapsed, {
-                debug: this.debug,
-                mouseControl: this.mouseControl,
-                growHairs: this.growHairs,
-                angle: (this.angle) * (Math.PI / 180)
-            });
+            hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug);
+            hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
 
-            if(this.debug) {
-                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
-            }
+          
 
 
-            // console.log(hairSystems[i].shapeOrigin)
         }
 
-        railSystems.forEach((rail,i)=>{
-            railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
 
-        })
         ball.position = this.mouse
         innerBall.position = this.mouse
 
