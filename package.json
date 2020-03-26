@@ -1,8 +1,8 @@
 {
-  "name": "boilerplate-parcel",
+  "name": "superbeast",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Jessica",
+  "author": "Tom Power",
   "license": "MIT",
   "dependencies": {
     "dat.gui": "^0.7.6",
