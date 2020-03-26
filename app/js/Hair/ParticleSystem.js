@@ -45,11 +45,14 @@ export default class ParticleSystem {
         this.lineDistance = 0
         this.growthConstaint = 10;
         this.anchor;
+        this.extraLength = 0
      
 
 
 
     }
+
+    
 
     setID(id) {
         this.id = id
@@ -61,6 +64,8 @@ export default class ParticleSystem {
 
     updateMouseLine(anchor, mouse) {
         this.anchor = anchor
+
+        this.extraLength = this.anchor.distanceTo(this.shapeOrigin)
 
         this.mouseLine.vertices[0].x = anchor.x
         this.mouseLine.vertices[0].y = anchor.y
@@ -181,8 +186,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
     
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 15), this.oldPos[i].x, 0.2);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 15), this.oldPos[i].y, 0.2);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * Math.PI / 15), this.oldPos[i].x, 0.01);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * Math.PI / 15), this.oldPos[i].y, 0.01);
 
                 this.oldPos[i] = v
 
@@ -236,8 +241,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
     
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].x, 0.52);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].y, 0.52);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].x, 0.2);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].y, 0.2);
 
                 this.oldPos[i] = v
 
@@ -254,7 +259,7 @@ export default class ParticleSystem {
 
     run(mouse,time, growthConstaints, debug) {
 
-        this.growthConstaint = growthConstaints[this.id]
+        this.growthConstaint = growthConstaints[this.id] + this.extraLength*0.125
 
    
 
