@@ -39,7 +39,7 @@ export default function TwoJSManager() {
     // MOUSE
     this.mouse = new Two.Vector()
 
-    var influenceRadius = 160;
+    var influenceRadius = 250;
 
     let lines = []
 
@@ -75,37 +75,43 @@ export default function TwoJSManager() {
         //  Check if it is a hairs patch
         if (logo.children[i].id.includes("hair")) {
             if (logo.children[i].children[0]) {
-                
 
-                // let childRect = logo.children[i].children[0].getBoundingClientRect()
-                // //////console.log(childRect)
-                // let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+
+                let childRect = logo.children[i].children[0].getBoundingClientRect()
+                //////console.log(childRect)
+                let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
             
-                // let hairsystem = new ParticleSystem(two, origin, logo.children[i], i)
-                // colorClasses.push(logo.children[i].children[0].fill)
-                // hairSystems.push(hairsystem)
+                let hairsystem = new ParticleSystem(two, origin, logo.children[i], i)
+                hairsystem.setID(logo.children[i].id.charAt(0))
+                colorClasses.push(logo.children[i].children[0].fill)
+                hairSystems.push(hairsystem)
             }
         } else if(logo.children[i].id.includes("anchor")) {
-            console.log(logo.children[i].id.charAt(0))
+            // console.log(logo.children[i].id.charAt(0))
             let childRect = logo.children[i].getBoundingClientRect()
 
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
             this.anchors[logo.children[i].id.charAt(0)] = origin
+            logo.children[i].visible = false
 
    
         } else if(logo.children[i].id.includes("rail")) {
             // console.log(logo.children[i].children[0])
             let rail = logo.children[i].children[0]
+            rail.visible = false
             rail.subdivide()
 
-            // let railSystem = new RailSystem(rail, two)
+            let railSystem = new RailSystem(rail, two)
+            railSystem.setID(logo.children[i].id.charAt(0))
+
+            railSystems.push(railSystem)
 
        
   
         }
     }
 
-    console.log(this.anchors)
+    // console.log(this.anchors)
 
 
 
@@ -128,7 +134,7 @@ export default function TwoJSManager() {
            
            
             hairSystems[i].setShapeOrigin(origin)
-            hairSystems[i].setInfluence(influenceRadius * logo.scale)
+            // hairSystems[i].setInfluence(influenceRadius * logo.scale)
 
       
 
@@ -211,7 +217,19 @@ export default function TwoJSManager() {
                 growHairs: this.growHairs,
                 angle: (this.angle) * (Math.PI / 180)
             });
+
+            if(this.debug) {
+                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
+            }
+
+
+            // console.log(hairSystems[i].shapeOrigin)
         }
+
+        railSystems.forEach((rail,i)=>{
+            railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
+
+        })
         ball.position = this.mouse
         innerBall.position = this.mouse
 

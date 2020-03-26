@@ -4,6 +4,7 @@ import {
 } from '../Util/Util'
 import * as _ from 'lodash-es'
 import * as noise from "../Util/Perlin"
+import Two from 'two.js'
 
 
 let specialCase = ["hair07", "hair06", "hair34"]
@@ -25,6 +26,9 @@ export default class ParticleSystem {
         this.setShapeOrigin(origin)
 
 
+        this.mouseLine = this.two.makeLine(0,0,0,0)
+        this.mouseLine.stroke = "white"
+
 
         this.time = 0
         this.amplitude = 0.01;
@@ -36,7 +40,7 @@ export default class ParticleSystem {
         this.index = i
         this.difference = Math.random() * 5
         this.calculateCentroid()
-        this.getAbsolutePoints()
+        // this.getAbsolutePoints()
         this.originalLengths = []
         this.lineDistance = 0
      
@@ -45,7 +49,22 @@ export default class ParticleSystem {
 
     }
 
+    setID(id) {
+        this.id = id
+    }
+
     setMouseAnchor(AnchorCircle) {
+
+    }
+
+    updateMouseLine(anchor, mouse) {
+
+        this.mouseLine.vertices[0].x = anchor.x
+        this.mouseLine.vertices[0].y = anchor.y
+
+      this.mouseLine.vertices[1].x = mouse.x
+        this.mouseLine.vertices[1].y = mouse.y
+
 
     }
 
@@ -222,32 +241,35 @@ export default class ParticleSystem {
 
 
         if (this.tweening === false) {
-            this.theta = Math.atan2((mouse.y + this.shapeOrigin.y), (mouse.x + this.shapeOrigin.x))
-            this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
-            if (this.rules) {
 
-                // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
-                if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius * 0.5 || this.rules.outerHair === true) {
-
-                    this.innerCircleBehaviour(mouse, time)
-
-
-                } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius * 0.5 && this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius && this.rules.outerHair == false) {
-                    this.outerCircleBehaviour(mouse, time)
-                } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius) {
-
-                    this.standbyBehaviour(mouse, time)
+                if(mouse.distanceTo(this.shapeOrigin)<this.influenceRadius){
+                    this.mouseLine.visible = true
+                } else {
+                    this.mouseLine.visible = false
 
                 }
-            }
+ 
+            // this.theta = Math.atan2((mouse.y + this.shapeOrigin.y), (mouse.x + this.shapeOrigin.x))
+            // this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
+            // if (this.rules) {
+
+            //     // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
+            //     if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius * 0.5 || this.rules.outerHair === true) {
+
+            //         this.innerCircleBehaviour(mouse, time)
+
+
+            //     } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius * 0.5 && this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius && this.rules.outerHair == false) {
+            //         this.outerCircleBehaviour(mouse, time)
+            //     } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius) {
+
+            //         this.standbyBehaviour(mouse, time)
+
+            //     }
+            // }
         }
 
-        this.time += 1
-
-        if (this.time === 100) {
-            // this.reset()
-            this.time = 0
-        }
+   
 
 
     }
