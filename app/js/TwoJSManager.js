@@ -139,13 +139,13 @@ export default function TwoJSManager() {
 
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
             this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
-            // superLogo.children[i].visible = false
+            superLogo.children[i].visible = false
 
 
         } else if (superLogo.children[i].id.includes("rail")) {
             // //console.log(superLogo.children[i].children[0])
             let rail = superLogo.children[i].children[0]
-            // rail.visible = false
+            rail.visible = false
             rail.subdivide()
 
             let railSystem = new RailSystem(rail, two)
@@ -187,13 +187,13 @@ export default function TwoJSManager() {
 
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
             this.anchors["beast" + beastLogo.children[i].id.charAt(2).toUpperCase()] = origin
-            // beastLogo.children[i].visible = false
+            beastLogo.children[i].visible = false
 
 
         } else if (beastLogo.children[i].id.includes("rail")) {
             // //console.log(beastLogo.children[i].children[0])
             let rail = beastLogo.children[i].children[0]
-            // rail.visible = false
+            rail.visible = false
             rail.subdivide()
 
             let railSystem = new RailSystem(rail, two)
@@ -250,22 +250,22 @@ export default function TwoJSManager() {
 
 
 
-        for (let i = 0; i < superLogo.children.length; i++) {
+        // for (let i = 0; i < superLogo.children.length; i++) {
 
-            if (superLogo.children[i].id.includes("anchor")) {
-                // //console.log(superLogo.children[i].id.charAt(0))
-                let childRect = superLogo.children[i].getBoundingClientRect()
+        //     if (superLogo.children[i].id.includes("anchor")) {
+        //         // //console.log(superLogo.children[i].id.charAt(0))
+        //         let childRect = superLogo.children[i].getBoundingClientRect()
 
-                let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-                this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
+        //         let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+        //         this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
 
 
-            }
-        }
+        //     }
+        // }
 
-        hairSystems.forEach((hair)=>{
-            // hair.resize()
-        })
+        // hairSystems.forEach((hair)=>{
+        //     // hair.resize()
+        // })
         two.scene.translation.set(two.width / 2, two.height / 2);
 
 
@@ -376,11 +376,6 @@ export default function TwoJSManager() {
                 retreat: this.retreat
             });
             hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
-
-
-
-
-
 
         }
 

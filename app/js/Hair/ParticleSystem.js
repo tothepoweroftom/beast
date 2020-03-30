@@ -40,6 +40,7 @@ export default class ParticleSystem {
         this.difference = Math.random() * 5
         this.calculateCentroid()
         // this.getAbsolutePoints()
+        // this.pointsGroup = new Two.Group()
         this.originalLengths = []
         this.lineDistance = 0
         this.growthConstaint = 10;
