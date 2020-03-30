@@ -185,8 +185,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
     
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * Math.PI / 5), this.oldPos[i].x, 0.02);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * Math.PI / 5), this.oldPos[i].y, 0.02);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * Math.PI / 15), this.oldPos[i].x, 0.02);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * Math.PI / 15), this.oldPos[i].y, 0.02);
 
                 this.oldPos[i] = v
 
@@ -213,9 +213,9 @@ export default class ParticleSystem {
                 o.addSelf(this.shapeOrigin)
                 this.lineDistance = distanceToLineSegment(this.anchor.x, this.anchor.y, mouse.x, mouse.y , o.x, o.y)
 
-                this.lineDistance = this.clamp(this.lineDistance, 0, 30)
-                this.lineDistance = this.map_range(this.lineDistance, 0, 30, 90, 0)
-                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint*0.33) * Math.sin(this.lineDistance*conversion)
+                this.lineDistance = this.clamp(this.lineDistance, 0, 40)
+                this.lineDistance = this.map_range(this.lineDistance, 0, 40, 90, 0)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint*0.25) * Math.sin(this.lineDistance*conversion)
 
                 o.subSelf(this.shapeOrigin)
     

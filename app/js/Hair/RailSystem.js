@@ -13,10 +13,12 @@ export default class RailSystem {
         this.two = two
         this.vertices = path.vertices
         this.points = []
-        this.drawPoints();
         this.distance = 0
         this.constraintDistance = 0
         this.highlighted = 0
+        this.pointsGroup = new Two.Group()
+        this.two.scene.add(this.pointsGroup)
+        this.setupPoints();
 
     }
 
@@ -24,18 +26,21 @@ export default class RailSystem {
         this.id = id
     }
 
-    drawPoints() {
+    setupPoints() {
+        let mult = window.innerWidth/1125<1 ? 0.5 : 1
 
-        this.vertices.forEach((anchor, i)=>{
+
+        this.path.vertices.forEach((anchor, i)=>{
             // console.log(i)
-            if(i%4===0) {
+            if(i%2===0) {
                 var p = new Two.Circle(0, 0, 4);
                 p.fill = "green"
+          
     
                 p.translation.copy(anchor);
                 p.translation.addSelf(this.origin);
                 this.points.push(p)
-                this.two.scene.add(p)
+                // this.pointsGroup.add(p)
             } else {
                 // this.vertices
             }
@@ -60,6 +65,8 @@ export default class RailSystem {
     }
 
     resize() {
+       
+
 
     }
 

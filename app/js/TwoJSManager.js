@@ -17,7 +17,7 @@ export default function TwoJSManager() {
     this.mouseControl = true;
     this.growHairs = 0.1
     this.angle = 0.0
-    this.debug = true;
+    this.debug = false;
     this.logoScale = 1.0
 
 
@@ -42,18 +42,19 @@ export default function TwoJSManager() {
     // MOUSE
     this.mouse = new Two.Vector()
 
-    var influenceRadius = 250;
+    this.influenceRadius = 250;
 
     let lines = []
 
 
-    var ball = two.makeCircle(two.width / 2, two.height / 2, influenceRadius);
+    var ball = two.makeCircle(two.width / 2, two.height / 2, this.influenceRadius);
     ball.noFill().stroke = 'red';
-    var innerBall = two.makeCircle(two.width / 2, two.height / 2, influenceRadius / 2);
+    var innerBall = two.makeCircle(two.width / 2, two.height / 2, this.influenceRadius / 2);
     innerBall.noFill().stroke = 'purple';
 
     var logo = two.interpret(svg);
     logo.center();
+    // logo.width = window.innerWidth
 
 
 
@@ -106,7 +107,7 @@ export default function TwoJSManager() {
         } else if(logo.children[i].id.includes("rail")) {
             // console.log(logo.children[i].children[0])
             let rail = logo.children[i].children[0]
-            // rail.visible = false
+            rail.visible = false
             rail.subdivide()
 
             let railSystem = new RailSystem(rail, two)
@@ -135,17 +136,18 @@ export default function TwoJSManager() {
         var aspect = two.width / two.height;
 
 
-        // logo.scale = window.innerWidth/1125
+
+        this.influenceRadius = window.innerWidth/4
+        ball.radius = this.influenceRadius
         for (let i = 0; i < hairSystems.length; i++) {
             let childRect = hairSystems[i].path.getBoundingClientRect()
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-            if (hairSystems[i].path.id === "hair00") {
-                this.specialOrigin = origin
-            }
+      
            
            
             hairSystems[i].setShapeOrigin(origin)
-            // hairSystems[i].setInfluence(influenceRadius * logo.scale)
+
+            hairSystems[i].setInfluence(this.influenceRadius)
 
       
 
