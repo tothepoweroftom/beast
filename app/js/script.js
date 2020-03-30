@@ -13,19 +13,27 @@ $( document ).ready(()=> {
     var gui = new dat.GUI();
     // gui.hide()
     gui.add(twoManager, 'debug');
-    
+    // gui.add(twoManager, 'mouseActive');
+
 
     // gui.add(twoManager, 'mouseControl');
     // gui.add(twoManager, 'growHairs', 0.1, 30.0);
     // gui.add(twoManager, 'angle', 0.0, 360.0);
 });
 
-
+let timer;
 var $window = $(window).bind('mousemove', (e) => {
 
     
 
-            if(twoManager) {
+            if(twoManager) {    
+                twoManager.mouseActive = true;
+
+                clearTimeout(timer);
+                timer=setTimeout(()=>{
+                    twoManager.mouseActive = false
+
+                },200);
                 twoManager.mouse.x = -window.innerWidth / 2 + e.clientX;
                 twoManager.mouse.y = -window.innerHeight / 2 + e.clientY;
             }
@@ -35,6 +43,9 @@ var $window = $(window).bind('mousemove', (e) => {
     .bind('touchstart', function (e) {
         e.preventDefault();
         window.scrollTo(0, 0)
+        if(twoManager) {
+            twoManager.mouseActive = true
+        }
         return false;
     })
     .bind('jerk', () => {
@@ -43,6 +54,10 @@ var $window = $(window).bind('mousemove', (e) => {
     .bind('touchend', function (e) {
         e.preventDefault();
         window.scrollTo(0, 0)
+        if(twoManager) {
+            twoManager.mouseActive = false
+
+        }
         return false;
     })
     .bind('mousedown', function (e) {

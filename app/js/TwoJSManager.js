@@ -18,6 +18,7 @@ export default function TwoJSManager() {
     this.growHairs = 0.1
     this.angle = 0.0
     this.debug = false;
+    this.mouseActive = false
     this.logoScale = 1.0
 
 
@@ -244,9 +245,9 @@ export default function TwoJSManager() {
 
 
         for (let i = 0; i < hairSystems.length; i++) {
-            hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug);
+            hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug, {mouseActive: this.mouseActive});
 
-                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
+                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse )
 
 
 
