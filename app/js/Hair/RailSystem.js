@@ -28,8 +28,8 @@ export default class RailSystem {
 
         this.vertices.forEach((anchor, i)=>{
             // console.log(i)
-            if(i%5===0) {
-                var p = new Two.Circle(0, 0, 10 / 4);
+            if(i%4===0) {
+                var p = new Two.Circle(0, 0, 4);
                 p.fill = "green"
     
                 p.translation.copy(anchor);

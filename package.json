@@ -10,6 +10,7 @@
     "jquery": "^3.4.1",
     "lodash-es": "^4.17.15",
     "postcss-modules": "^1.4.1",
+    "stats.js": "^0.17.0",
     "two.js": "^0.7.0-stable.1"
   },
   "babel": {
@@ -26,7 +27,7 @@
     "sass": "^1.16.1"
   },
   "scripts": {
-    "start": "parcel watch index.html",
+    "start": "parcel index.html",
     "build": "parcel build index.html"
   }
 }

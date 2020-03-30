@@ -3,18 +3,21 @@ import ParticleSystem from './Hair/ParticleSystem'
 import RailSystem from './Hair/RailSystem'
 import {noise} from "./Util/Perlin"
 import MouseAnalyser from './Util/MouseAnalyser'
+import Stats from 'stats.js'
 
 let colorClasses = []
 
 export default function TwoJSManager() {
-    
+    this.stats = new Stats();
+    this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( this.stats.dom );
     // DAT.GUI
     ////////////////////////////////////////////////////////////////////////////////////
     this.controlData = {}
     this.mouseControl = true;
     this.growHairs = 0.1
     this.angle = 0.0
-    this.debug = false;
+    this.debug = true;
     this.logoScale = 1.0
 
 
@@ -25,11 +28,11 @@ export default function TwoJSManager() {
 
 
     this.xAxis, this.yAxis = null
-
+    let container =document.querySelector(".container")
     var two = new Two({
         fullscreen: true,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: container.innerWidth,
+        height: container.innerHeight,
         autostart: true
     }).appendTo(document.querySelector(".container"));
 
@@ -103,11 +106,12 @@ export default function TwoJSManager() {
         } else if(logo.children[i].id.includes("rail")) {
             // console.log(logo.children[i].children[0])
             let rail = logo.children[i].children[0]
-            rail.visible = false
+            // rail.visible = false
             rail.subdivide()
 
             let railSystem = new RailSystem(rail, two)
             railSystem.setID(logo.children[i].id.charAt(0))
+            // railSystem.scale = 2
 
             railSystems.push(railSystem)
 
@@ -131,7 +135,7 @@ export default function TwoJSManager() {
         var aspect = two.width / two.height;
 
 
- 
+        // logo.scale = window.innerWidth/1125
         for (let i = 0; i < hairSystems.length; i++) {
             let childRect = hairSystems[i].path.getBoundingClientRect()
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
@@ -170,10 +174,11 @@ export default function TwoJSManager() {
 
 
     two.bind("update", (frameCount, timeDelta) => {
-        if (!timeDelta) {
-            return;
-        }
+        // if (!timeDelta) {
+        //     return;
+        // }
 
+        this.stats.begin();
 
 
         elapsed += timeDelta;
@@ -238,7 +243,10 @@ export default function TwoJSManager() {
 
         for (let i = 0; i < hairSystems.length; i++) {
             hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug);
-            hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
+
+                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
+
+
 
           
 
@@ -251,6 +259,6 @@ export default function TwoJSManager() {
 
 
 
-
+        this.stats.end()
     });
 }

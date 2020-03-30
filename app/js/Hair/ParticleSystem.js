@@ -6,7 +6,6 @@ import * as _ from 'lodash-es'
 import * as noise from "../Util/Perlin"
 import Two from 'two.js'
 
-
 let specialCase = ["hair07", "hair06", "hair34"]
 let conversion = Math.PI / 180
 
@@ -46,7 +45,7 @@ export default class ParticleSystem {
         this.growthConstaint = 10;
         this.anchor;
         this.extraLength = 0
-     
+        
 
 
 
@@ -98,7 +97,7 @@ export default class ParticleSystem {
 
     resize(scale) {
 
-        this.path.scale = scale
+        // this.path.scale = scale
 
 
     }
@@ -174,7 +173,7 @@ export default class ParticleSystem {
 
                 let v = this.displayed.vertices[i]
                 this.oldPos[i] = v
-                this.difference = noise.noise2(time * v.x, time * v.y)
+                this.difference = noise.noise2(time * v.x, time * v.y)*5
                 let o = this.origin.vertices[i]
                 o.addSelf(this.shapeOrigin)
                 this.lineDistance = distanceToLineSegment(this.anchor.x, this.anchor.y, mouse.x, mouse.y , o.x, o.y)
@@ -186,8 +185,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
     
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * Math.PI / 15), this.oldPos[i].x, 0.01);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * Math.PI / 15), this.oldPos[i].y, 0.01);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * Math.PI / 5), this.oldPos[i].x, 0.02);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * Math.PI / 5), this.oldPos[i].y, 0.02);
 
                 this.oldPos[i] = v
 
@@ -200,27 +199,7 @@ export default class ParticleSystem {
         }
     }
 
-    outerCircleBehaviour(mouse, time) {
-        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
 
-            if ((i + 1) % 2 === 0 && !this.rules.exceptions.includes(i)) {
-
-
-
-
-                let v = this.displayed.vertices[i]
-                let o = this.origin.vertices[i]
-
-
-
-
-
-
-
-                // ////console("distance", v.distanceTo(o))
-            }
-        }
-    }
 
     standbyBehaviour(mouse, time) {
         for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
@@ -241,8 +220,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
     
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].x, 0.2);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 5), this.oldPos[i].y, 0.2);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * Math.PI / 8), this.oldPos[i].x, 0.2);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * Math.PI / 8), this.oldPos[i].y, 0.2);
 
                 this.oldPos[i] = v
 
@@ -258,8 +237,8 @@ export default class ParticleSystem {
 
 
     run(mouse,time, growthConstaints, debug) {
+        this.growthConstaint = growthConstaints[this.id]
 
-        this.growthConstaint = growthConstaints[this.id] + this.extraLength*0.125
 
    
 
@@ -280,6 +259,14 @@ export default class ParticleSystem {
  
             this.theta = Math.atan2((mouse.y - this.anchor.y), (mouse.x -  this.anchor.x))
             this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
+
+            if(this.path.id === "B_hair_05"){
+                
+            this.theta = Math.atan2((mouse.y - this.anchor.y), (mouse.x -  this.anchor.x)) + Math.PI
+            this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
+            this.growthConstaint = growthConstaints[this.id]*0.5
+
+            }
 
                 // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
                 if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius) {
