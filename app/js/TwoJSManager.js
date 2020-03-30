@@ -11,8 +11,8 @@ let colorClasses = []
 
 export default function TwoJSManager() {
     this.stats = new Stats();
-    this.stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild( this.stats.dom );
+    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(this.stats.dom);
     // DAT.GUI
     ////////////////////////////////////////////////////////////////////////////////////
     this.controlData = {}
@@ -21,7 +21,10 @@ export default function TwoJSManager() {
     this.angle = 0.0
     this.debug = false;
     this.mouseActive = false
-    this.logoScale = 1.0
+    this.superLogoScale = 1.0
+    this.wiggle = Math.PI / 15;
+    this.retreat = 0.9;
+    this.spacing = 50;
 
 
 
@@ -32,7 +35,7 @@ export default function TwoJSManager() {
 
 
     this.xAxis, this.yAxis = null
-    let container =document.querySelector(".container")
+    let container = document.querySelector(".container")
     var two = new Two({
         fullscreen: true,
         type: Two.Types.svg,
@@ -41,7 +44,12 @@ export default function TwoJSManager() {
         autostart: true
     }).appendTo(document.querySelector(".container"));
 
-    var svg = document.querySelector("svg#superbeast");
+
+    this.superLogoGroup = new Two.Group();
+    two.add(this.superLogoGroup);
+    this.beastLogoGroup = new Two.Group();
+    two.add(this.beastLogoGroup);
+    var svg = document.querySelector("svg#super");
     svg.style.display = "none";
     this.particleBackground = new ParticleBackground(two)
 
@@ -58,20 +66,43 @@ export default function TwoJSManager() {
     var innerBall = two.makeCircle(two.width / 2, two.height / 2, this.influenceRadius / 2);
     innerBall.noFill().stroke = 'purple';
 
-    var logo = two.interpret(svg);
-    logo.center();
-    // logo.width = window.innerWidth
+    var superLogo = two.interpret(svg);
+    superLogo.center()
+    // superLogo.translation.x = -200
+    two.remove(superLogo)
+    this.superLogoGroup.add(superLogo);
+
+    var rect = superLogo.getBoundingClientRect();
+    this.superLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
+    this.superLogoRect.stroke = "#ff00ff"
+    this.superLogoRect.fill = "rgba(0,0,0,0)"
+    this.superLogoGroup.add(this.superLogoRect);
+    // superLogo.translation.x = -this.superLogoRect.width/2 + this.spacing
+
+    // superLogo.center();
+    // superLogo.width = window.innerWidth
+    var beastsvg = document.querySelector("svg#beast");
+    beastsvg.style.display = "none";
+
+    // var beastLogo = two.interpret(beastsvg);
+    // beastLogo.center()
+    // two.remove(beastLogo)
+
+    // this.beastLogoGroup.add(beastLogo)
+
+    // var rect = beastLogo.getBoundingClientRect();
+    // this.beastLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
+    // this.beastLogoRect.stroke = "#ffffff"
+    // this.beastLogoRect.fill = "rgba(0,0,0,0)" 
+    //    // beastLogo.center();
+    //    beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
 
 
 
-    var rect = logo.getBoundingClientRect();
-    this.logoRect = two.makeRectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
-    this.logoRect.stroke = "#ff00ff"
-    this.logoRect.fill = "rgba(0,0,0,0)"
     let rects = []
     let hairSystems = []
     let railSystems = []
-    let base;
+    let bases = [];
 
     this.anchors = {}
 
@@ -82,83 +113,163 @@ export default function TwoJSManager() {
 
 
     ///////////////////////////////////////////////////
-    /// Take the logo and parse out the hairy regions//
+    /// Take the superLogo and parse out the hairy regions//
     ///////////////////////////////////////////////////
 
-    for (let i = 0; i < logo.children.length; i++) {
+    for (let i = 0; i < superLogo.children.length; i++) {
 
         //  Check if it is a hairs patch
-        if (logo.children[i].id.includes("hair")) {
-            if (logo.children[i].children[0]) {
+        if (superLogo.children[i].id.includes("hair")) {
+            if (superLogo.children[i].children[0]) {
 
 
-                let childRect = logo.children[i].children[0].getBoundingClientRect()
-                //////console.log(childRect)
+                let childRect = superLogo.children[i].children[0].getBoundingClientRect()
+                //////////console.log(childRect)
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-            
-                let hairsystem = new ParticleSystem(two, origin, logo.children[i], i)
-                hairsystem.setID(logo.children[i].id.charAt(0))
-                colorClasses.push(logo.children[i].children[0].fill)
+
+                let hairsystem = new ParticleSystem(two, origin, superLogo.children[i], i)
+                hairsystem.setID("super" + superLogo.children[i].id.charAt(2).toUpperCase())
+                console.log(superLogo.children[i].id.charAt(2))
+                colorClasses.push(superLogo.children[i].children[0].fill)
                 hairSystems.push(hairsystem)
             }
-        } else if(logo.children[i].id.includes("anchor")) {
-            // console.log(logo.children[i].id.charAt(0))
-            let childRect = logo.children[i].getBoundingClientRect()
+        } else if (superLogo.children[i].id.includes("anchor")) {
+            // //console.log(superLogo.children[i].id.charAt(0))
+            let childRect = superLogo.children[i].getBoundingClientRect()
 
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-            this.anchors[logo.children[i].id.charAt(0)] = origin
-            logo.children[i].visible = false
+            this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
+            // superLogo.children[i].visible = false
 
-   
-        } else if(logo.children[i].id.includes("rail")) {
-            // console.log(logo.children[i].children[0])
-            let rail = logo.children[i].children[0]
-            rail.visible = false
+
+        } else if (superLogo.children[i].id.includes("rail")) {
+            // //console.log(superLogo.children[i].children[0])
+            let rail = superLogo.children[i].children[0]
+            // rail.visible = false
             rail.subdivide()
 
             let railSystem = new RailSystem(rail, two)
-            railSystem.setID(logo.children[i].id.charAt(0))
+            railSystem.setID("super" + superLogo.children[i].id.charAt(2).toUpperCase())
             // railSystem.scale = 2
 
             railSystems.push(railSystem)
 
-       
-  
-        } else if(logo.children[i].id.includes("base")) {
-            base = logo.children[i]
+
+
+        } else if (superLogo.children[i].id.includes("base")) {
+            bases.push(superLogo.children[i])
         }
     }
-
-    // console.log(this.anchors)
-
-
   
+
+
+    // /// Same for Beast Logo
+    // for (let i = 0; i < beastLogo.children.length; i++) {
+
+    //     //  Check if it is a hairs patch
+    //     if (beastLogo.children[i].id.includes("hair")) {
+    //         if (beastLogo.children[i].children[0]) {
+
+
+    //             let childRect = beastLogo.children[i].children[0].getBoundingClientRect()
+    //             ////////console.log(childRect)
+    //             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+
+    //             let hairsystem = new ParticleSystem(two, origin, beastLogo.children[i], i)
+    //             hairsystem.setID("beast" + superLogo.children[i].id.charAt(0).toUpperCase())
+    //             colorClasses.push(beastLogo.children[i].children[0].fill)
+    //             hairSystems.push(hairsystem)
+    //         }
+    //     } else if(beastLogo.children[i].id.includes("anchor")) {
+    //         // //console.log(beastLogo.children[i].id.charAt(0))
+    //         let childRect = beastLogo.children[i].getBoundingClientRect()
+
+    //         let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+    //         //console.log("beast" + beastLogo.children[i].id.charAt(0))
+    //         if(!origin) {
+    //             //console.log("ori")
+    //         }
+    //         this.anchors["beast" + beastLogo.children[i].id.charAt(0)] = origin
+    //         ////console.log(this.anchors)
+    //         beastLogo.children[i].visible = false
+
+
+    //     } else if(beastLogo.children[i].id.includes("rail")) {
+    //         // ////console.log(beastLogo.children[i].children[0])
+    //         let rail = beastLogo.children[i].children[0]
+    //         // rail.visible = false
+    //         rail.subdivide()
+
+    //         let railSystem = new RailSystem(rail, two)
+    //         railSystem.setID("beast" + beastLogo.children[i].id.charAt(0).toUpperCase())
+    //         // railSystem.scale = 2
+
+    //         railSystems.push(railSystem)
+
+
+
+    //     } else if(beastLogo.children[i].id.includes("base")) {
+    //         bases.push(beastLogo.children[i])
+    //     }
+    // }
+
+
 
 
 
     // // Scene resize -==---------------------------------------------------------------------
     two.bind("resize", () => {
-        
+
         var aspect = two.width / two.height;
 
 
 
-        this.influenceRadius = window.innerWidth/4
-        ball.radius = this.influenceRadius
-        for (let i = 0; i < hairSystems.length; i++) {
-            let childRect = hairSystems[i].path.getBoundingClientRect()
-            let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-      
-           
-           
-            hairSystems[i].setShapeOrigin(origin)
+        // recalculate anchors
 
-            hairSystems[i].setInfluence(this.influenceRadius)
 
-      
 
+
+
+        if (window.innerWidth < 1200) {
+            // beastLogo.translation.x = 0
+            // beastLogo.translation.y = +this.beastLogoRect.height/3
+            // superLogo.translation.x = -two.width/2
+            // superLogo.translation.y = -two.height/2
+            // this.superLogoGroup.scale = 0.5;
+            // this.beastLogoGroup.scale = 2;
+
+            // railSystems.forEach((rail) => {
+            //     rail.pointsGroup.scale = 0.5;
+            // })
+
+        } else {
+            // beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
+            // beastLogo.translation.y = 0
+            // this.superLogoGroup.scale = 1;
+            // this.beastLogoGroup.scale = 1;
+            // railSystems.forEach((rail)=>{
+            //     rail.pointsGroup.scale = 2
+            // })
         }
 
+
+
+        for (let i = 0; i < superLogo.children.length; i++) {
+
+            if (superLogo.children[i].id.includes("anchor")) {
+                // //console.log(superLogo.children[i].id.charAt(0))
+                let childRect = superLogo.children[i].getBoundingClientRect()
+
+                let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+                this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
+
+
+            }
+        }
+
+        hairSystems.forEach((hair)=>{
+            // hair.resize()
+        })
         two.scene.translation.set(two.width / 2, two.height / 2);
 
 
@@ -182,16 +293,18 @@ export default function TwoJSManager() {
 
 
     two.bind("update", (frameCount, timeDelta) => {
-        if (!timeDelta) {
-            return;
-        }
 
         this.stats.begin();
 
 
         elapsed += timeDelta;
 
-        this.particleBackground.run(timeDelta)
+        // console.log(frameCount)
+
+        if (frameCount % 2 === 0) {
+            this.particleBackground.run(timeDelta)
+
+        }
 
 
 
@@ -205,19 +318,24 @@ export default function TwoJSManager() {
                 rect.visible = false
             })
             hairSystems.forEach((hair, index) => {
-                //////console.log(hair)
+                //////////console.log(hair)
                 hair.mouseLine.visible = false;
 
                 hair.path.fill = "#02f768"
+                hair.path.stroke = "#02f768"
+
             })
 
-            railSystems.forEach((rail)=>{
+            railSystems.forEach((rail) => {
                 rail.togglePoints(false)
             })
             // mouseLine.visible = false
-            base.fill = "#02f768"
+            bases.forEach((base) => {
+                base.fill = "#02f768"
 
-            this.logoRect.visible = false
+            })
+
+            this.superLogoRect.visible = false
 
         } else if (this.debug && ball.visible === false) {
             ball.visible = true;
@@ -227,25 +345,28 @@ export default function TwoJSManager() {
                 rect.visible = true
             })
 
-            railSystems.forEach((rail)=>{
+            railSystems.forEach((rail) => {
                 rail.togglePoints(true)
             })
 
             hairSystems.forEach((hair, index) => {
                 hair.mouseLine.visible = true;
-                ////console.log(hair)
+                ////////console.log(hair)
                 hair.path.fill = colorClasses[index]
             })
-            base.fill = "#ffffff"
+            bases.forEach((base) => {
+                base.fill = "#ffffff"
+
+            })
 
 
 
             // mouseLine.visible = true
-            this.logoRect.visible = true
+            this.superLogoRect.visible = true
 
         }
 
-        railSystems.forEach((rail,i)=>{
+        railSystems.forEach((rail, i) => {
             this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
 
         })
@@ -253,13 +374,16 @@ export default function TwoJSManager() {
 
 
         for (let i = 0; i < hairSystems.length; i++) {
-            hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug, {mouseActive: this.mouseActive});
+            hairSystems[i].run(this.mouse, elapsed, this.growthLimits, this.debug, {
+                mouseActive: this.mouseActive,
+                wiggle: this.wiggle,
+                retreat: this.retreat
+            });
+            hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
 
-                hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse )
 
 
 
-          
 
 
         }

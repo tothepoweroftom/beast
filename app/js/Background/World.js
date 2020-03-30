@@ -37,15 +37,15 @@ export default function WrappedWorld(width, height) {
 	this.step = function(dt) {
 		self.agents.forEach(function(agent) {
 			if (agent.position.x < 0) {
-				agent.position.x += self.width;
+				agent.velocity.x = 0.001;
 			} else if (agent.position.x > self.width) {
-				agent.position.x -= self.width;
+				agent.velocity.x = -0.001;
 			}
 
 			if (agent.position.y < 0) {
-				agent.position.y += self.height;
+				agent.velocity.y = 0.001;
 			} else if (agent.position.y > self.height) {
-				agent.position.y -= self.height;
+				agent.velocity.y = -0.001;
 			}
 		});
 	}

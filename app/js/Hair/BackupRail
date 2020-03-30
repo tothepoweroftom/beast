@@ -5,19 +5,20 @@ import {distanceToLineSegment} from '../Util/Util'
 
 
 export default class RailSystem {
-    constructor(path, two) {
-        this.boundingRect = path.getBoundingClientRect()
+    constructor(logo,index, two) {
+        this.boundingRect = logo.children[index].getBoundingClientRect()
         //////console.log(childRect)
+        this.logo = logo
         this.origin =  new Two.Vector(this.boundingRect.left + this.boundingRect.width / 2, this.boundingRect.top + this.boundingRect.height / 2)
-        this.path = path
+        this.path = logo.children[index].children[0].clone()
         this.two = two
-        this.vertices = path.vertices
+        this.vertices = this.path.vertices
+        
         this.points = []
         this.distance = 0
         this.constraintDistance = 0
         this.highlighted = 0
-        this.pointsGroup = new Two.Group()
-        two.add(this.pointsGroup)
+        
         this.setupPoints();
 
     }
@@ -27,11 +28,12 @@ export default class RailSystem {
     }
 
     setupPoints() {
-    
+        let mult = window.innerWidth/1125<1 ? 0.5 : 1
+
 
         this.path.vertices.forEach((anchor, i)=>{
-            // console.log(i)
-            if(i%1===0) {
+            
+            if(i%2===0) {
                 var p = new Two.Circle(0, 0, 4);
                 p.fill = "green"
           
@@ -39,12 +41,11 @@ export default class RailSystem {
                 p.translation.copy(anchor);
                 p.translation.addSelf(this.origin);
                 this.points.push(p)
-                this.pointsGroup.add(p)
+                this.two.add(p)
             } else {
                 // this.vertices
             }
 
-            
        
   
         })
@@ -64,6 +65,8 @@ export default class RailSystem {
     }
 
     resize() {
+       
+
 
     }
 
@@ -71,29 +74,38 @@ export default class RailSystem {
 
         this.distance = Number.MAX_VALUE
         this.highlighted = 0
+        this.selected = null
     
 
-        this.points.forEach((point, i)=>{
+        this.path.vertices.forEach((vertex, i)=>{
 
          
-            // console.log(i)
-            let d = distanceToLineSegment(anchor.x, anchor.y, mouse.x, mouse.y, point.position.x, point.position.y)
+            // //console.log(i)
+            let v = this.path.vertices[i].clone()
+
+
+            v.addSelf(this.origin)
+            let d = distanceToLineSegment(anchor.x, anchor.y, mouse.x, mouse.y, vertex.x, vertex.y)
             if (d<this.distance) {
                 this.distance = d;
                 this.highlighted = i
+                this.selected = v
 
             } 
-                this.points[i].fill = "green"
+                // this.points[i].fill = "green"
+            v.subSelf(this.origin)
 
             
             
 
  
         })
-        // console.log(this.distance)
-        this.points[this.highlighted].fill = "yellow"
+        // //console.log(this.distance)
+        // this.points[this.highlighted].fill = "yellow"
+        
 
-        return this.points[this.highlighted].position.distanceTo(anchor)
+
+        return this.selected.distanceTo(anchor)
     }
 
 

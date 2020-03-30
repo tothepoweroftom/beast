@@ -8,12 +8,15 @@ import * as dat from 'dat.gui';
 let twoManager;
 // Window Onload
 $( document ).ready(()=> {
-    console.log( "ready!" );
+    //console.log( "ready!" );
     twoManager = new TwoJSManager();
 
     var gui = new dat.GUI();
     // gui.hide()
     gui.add(twoManager, 'debug');
+    gui.add(twoManager, 'retreat', 0.5, 0.95);
+    gui.add(twoManager, 'wiggle', 0.01, 1.5);
+
     // gui.add(twoManager, 'mouseActive');
 
 
@@ -52,9 +55,6 @@ var $window = $(window).bind('mousemove', (e) => {
             twoManager.mouseActive = true
         }
         return false;
-    })
-    .bind('jerk', () => {
-
     })
     .bind('touchend', function (e) {
         e.preventDefault();

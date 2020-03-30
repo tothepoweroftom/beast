@@ -67,26 +67,30 @@ export function Agent(position, world, two, particleGroup) {
     this.two = two
 	this.boidWeights = { alignment: 1, cohesion: 4, random: 3, separation: 3.6 };
 	this.heading = new Two.Vector();
-	this.maxspeed = 0.01;
+	this.maxspeed = 0.1;
     this.position = position;
     this.translation = new Two.Vector(-this.two.width/2, -this.two.height/2)
-    this.view = new Two.Circle(position.x, position.y, 1.5);
+    this.view = new Two.Circle(position.x, position.y, 1);
     this.view.fill = colors[Math.floor(Math.random()*colors.length)]
-	this.speed = 0.001;
+    this.view.stroke = "rgba(0,0,0,0)"
+    // this.view.noStroke()
+	this.speed = 0.005;
     this.velocity = new Two.Vector();
     particleGroup.add(this.view)
     // this.random = new Two.Vector(-2 + noise.noise2(Math.random(), Math.random()), -2 + noise.noise2(Math.random(), Math.random())*2)
     this.accel = new Two.Vector(0,0)
 
 	this.step = function(dt) {
-		// calculate acceleration
+        // calculate acceleration
+        
         self.accel.x = -1 + 2*noise.pnoise2(self.position.x*0.5, self.position.y, dt*2, dt*2)
-        self.accel.y = -Math.random() + 2*noise.pnoise2(self.position.x, self.position.y, dt*0.5, dt)
+        self.accel.y = -1  + 2*noise.pnoise2(self.position.x, self.position.y, dt*0.5, dt)
 
 		self.accel.multiplyScalar(self.speed);
 
 		// apply forces
 		self.velocity.addSelf(self.accel);
+		// self.velocity.addSelf(self.accel);
 
 		// apply dampener
 		// self.velocity.multiplyScalar(0.995);
