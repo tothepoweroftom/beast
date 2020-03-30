@@ -31,7 +31,7 @@ export default class RailSystem {
 
         this.path.vertices.forEach((anchor, i)=>{
             // console.log(i)
-            if(i%1===0) {
+            if(i%4===0) {
                 var p = new Two.Circle(0, 0, 4);
                 p.fill = "green"
           

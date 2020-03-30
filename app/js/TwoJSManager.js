@@ -68,7 +68,7 @@ export default function TwoJSManager() {
 
     var superLogo = two.interpret(svg);
     superLogo.center()
-    // superLogo.translation.x = -200
+    superLogo.translation.x = -200
     two.remove(superLogo)
     this.superLogoGroup.add(superLogo);
 
@@ -84,18 +84,18 @@ export default function TwoJSManager() {
     var beastsvg = document.querySelector("svg#beast");
     beastsvg.style.display = "none";
 
-    // var beastLogo = two.interpret(beastsvg);
-    // beastLogo.center()
-    // two.remove(beastLogo)
+    var beastLogo = two.interpret(beastsvg);
+    beastLogo.center()
+    two.remove(beastLogo)
 
-    // this.beastLogoGroup.add(beastLogo)
+    this.beastLogoGroup.add(beastLogo)
 
-    // var rect = beastLogo.getBoundingClientRect();
-    // this.beastLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
-    // this.beastLogoRect.stroke = "#ffffff"
-    // this.beastLogoRect.fill = "rgba(0,0,0,0)" 
-    //    // beastLogo.center();
-    //    beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
+    var rect = beastLogo.getBoundingClientRect();
+    this.beastLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
+    this.beastLogoRect.stroke = "#ffffff"
+    this.beastLogoRect.fill = "rgba(0,0,0,0)" 
+       // beastLogo.center();
+    beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
 
 
 
@@ -164,55 +164,51 @@ export default function TwoJSManager() {
 
 
     // /// Same for Beast Logo
-    // for (let i = 0; i < beastLogo.children.length; i++) {
+    for (let i = 0; i < beastLogo.children.length; i++) {
 
-    //     //  Check if it is a hairs patch
-    //     if (beastLogo.children[i].id.includes("hair")) {
-    //         if (beastLogo.children[i].children[0]) {
-
-
-    //             let childRect = beastLogo.children[i].children[0].getBoundingClientRect()
-    //             ////////console.log(childRect)
-    //             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-
-    //             let hairsystem = new ParticleSystem(two, origin, beastLogo.children[i], i)
-    //             hairsystem.setID("beast" + superLogo.children[i].id.charAt(0).toUpperCase())
-    //             colorClasses.push(beastLogo.children[i].children[0].fill)
-    //             hairSystems.push(hairsystem)
-    //         }
-    //     } else if(beastLogo.children[i].id.includes("anchor")) {
-    //         // //console.log(beastLogo.children[i].id.charAt(0))
-    //         let childRect = beastLogo.children[i].getBoundingClientRect()
-
-    //         let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-    //         //console.log("beast" + beastLogo.children[i].id.charAt(0))
-    //         if(!origin) {
-    //             //console.log("ori")
-    //         }
-    //         this.anchors["beast" + beastLogo.children[i].id.charAt(0)] = origin
-    //         ////console.log(this.anchors)
-    //         beastLogo.children[i].visible = false
+        //  Check if it is a hairs patch
+        if (beastLogo.children[i].id.includes("hair")) {
+            if (beastLogo.children[i].children[0]) {
 
 
-    //     } else if(beastLogo.children[i].id.includes("rail")) {
-    //         // ////console.log(beastLogo.children[i].children[0])
-    //         let rail = beastLogo.children[i].children[0]
-    //         // rail.visible = false
-    //         rail.subdivide()
+                let childRect = beastLogo.children[i].children[0].getBoundingClientRect()
+                //////////console.log(childRect)
+                let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
 
-    //         let railSystem = new RailSystem(rail, two)
-    //         railSystem.setID("beast" + beastLogo.children[i].id.charAt(0).toUpperCase())
-    //         // railSystem.scale = 2
+                let hairsystem = new ParticleSystem(two, origin, beastLogo.children[i], i)
+                hairsystem.setID("beast" + beastLogo.children[i].id.charAt(2).toUpperCase())
+                console.log(beastLogo.children[i].id.charAt(2))
+                colorClasses.push(beastLogo.children[i].children[0].fill)
+                hairSystems.push(hairsystem)
+            }
+        } else if (beastLogo.children[i].id.includes("anchor")) {
+            // //console.log(beastLogo.children[i].id.charAt(0))
+            let childRect = beastLogo.children[i].getBoundingClientRect()
 
-    //         railSystems.push(railSystem)
+            let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+            this.anchors["beast" + beastLogo.children[i].id.charAt(2).toUpperCase()] = origin
+            // beastLogo.children[i].visible = false
+
+
+        } else if (beastLogo.children[i].id.includes("rail")) {
+            // //console.log(beastLogo.children[i].children[0])
+            let rail = beastLogo.children[i].children[0]
+            // rail.visible = false
+            rail.subdivide()
+
+            let railSystem = new RailSystem(rail, two)
+            railSystem.setID("beast" + beastLogo.children[i].id.charAt(2).toUpperCase())
+            // railSystem.scale = 2
+
+            railSystems.push(railSystem)
 
 
 
-    //     } else if(beastLogo.children[i].id.includes("base")) {
-    //         bases.push(beastLogo.children[i])
-    //     }
-    // }
-
+        } else if (beastLogo.children[i].id.includes("base")) {
+            bases.push(beastLogo.children[i])
+        }
+    }
+  
 
 
 
@@ -230,27 +226,27 @@ export default function TwoJSManager() {
 
 
 
-        if (window.innerWidth < 1200) {
-            // beastLogo.translation.x = 0
-            // beastLogo.translation.y = +this.beastLogoRect.height/3
-            // superLogo.translation.x = -two.width/2
-            // superLogo.translation.y = -two.height/2
-            // this.superLogoGroup.scale = 0.5;
-            // this.beastLogoGroup.scale = 2;
+        // if (window.innerWidth < 1200) {
+        //     beastLogo.translation.x = 0
+        //     beastLogo.translation.y = +this.beastLogoRect.height/3
+        //     superLogo.translation.x = -two.width/2
+        //     superLogo.translation.y = -two.height/2
+        //     this.superLogoGroup.scale = 0.5;
+        //     this.beastLogoGroup.scale = 0.5;
 
-            // railSystems.forEach((rail) => {
-            //     rail.pointsGroup.scale = 0.5;
-            // })
+        //     railSystems.forEach((rail) => {
+        //         rail.pointsGroup.scale = 0.5;
+        //     })
 
-        } else {
-            // beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
-            // beastLogo.translation.y = 0
-            // this.superLogoGroup.scale = 1;
-            // this.beastLogoGroup.scale = 1;
-            // railSystems.forEach((rail)=>{
-            //     rail.pointsGroup.scale = 2
-            // })
-        }
+        // } else {
+        //     beastLogo.translation.x = this.beastLogoRect.width/2 - this.spacing
+        //     beastLogo.translation.y = 0
+        //     this.superLogoGroup.scale = 1;
+        //     this.beastLogoGroup.scale = 1;
+        //     railSystems.forEach((rail)=>{
+        //         rail.pointsGroup.scale = 1
+        //     })
+        // }
 
 
 
