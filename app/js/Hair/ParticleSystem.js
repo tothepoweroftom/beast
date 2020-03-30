@@ -249,8 +249,8 @@ export default class ParticleSystem {
 
 
 
-                v.x = this.lerp(o.x, this.oldPos[i].x, 0.9);
-                v.y= this.lerp(o.y, this.oldPos[i].y, 0.9);
+                v.x = this.lerp(o.x, this.oldPos[i].x, 0.95);
+                v.y= this.lerp(o.y, this.oldPos[i].y, 0.95);
 
                 this.oldPos[i] = v
 

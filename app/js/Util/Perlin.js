@@ -39,7 +39,7 @@ function fade(t) {
 	return ( t * t * t * ( t * ( t * 6 - 15 ) + 10 ) );
 }
 
-function lerp(t, a, b) {
+export function lerp(t, a, b) {
 	return ((a) + (t)*((b)-(a)));
 }
 

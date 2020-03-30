@@ -4,6 +4,7 @@ import $ from 'jquery'
 import TwoJSManager from './TwoJSManager'
 import * as dat from 'dat.gui';
 
+
 let twoManager;
 // Window Onload
 $( document ).ready(()=> {
@@ -33,7 +34,7 @@ var $window = $(window).bind('mousemove', (e) => {
                 timer=setTimeout(()=>{
                     twoManager.mouseActive = false
 
-                },200);
+                },500);
                 twoManager.mouse.x = -window.innerWidth / 2 + e.clientX;
                 twoManager.mouse.y = -window.innerHeight / 2 + e.clientY;
             }
@@ -44,6 +45,10 @@ var $window = $(window).bind('mousemove', (e) => {
         e.preventDefault();
         window.scrollTo(0, 0)
         if(twoManager) {
+            var touch = e.originalEvent.changedTouches[0];
+
+            twoManager.mouse.x = -window.innerWidth / 2 + touch.pageX;
+            twoManager.mouse.y = -window.innerHeight / 2 + touch.pageY;
             twoManager.mouseActive = true
         }
         return false;

@@ -1,9 +1,11 @@
 import Two from 'two.js'
 import ParticleSystem from './Hair/ParticleSystem'
 import RailSystem from './Hair/RailSystem'
-import {noise} from "./Util/Perlin"
+import * as noise from "./Util/Perlin"
 import MouseAnalyser from './Util/MouseAnalyser'
 import Stats from 'stats.js'
+import ParticleBackground from './Background/ParticleBackground'
+import Mediator from './Background/Mediator'
 
 let colorClasses = []
 
@@ -24,6 +26,7 @@ export default function TwoJSManager() {
 
 
 
+
     this.mouseAnalyser = new MouseAnalyser()
     this.resizeCount = 0;
 
@@ -32,6 +35,7 @@ export default function TwoJSManager() {
     let container =document.querySelector(".container")
     var two = new Two({
         fullscreen: true,
+        type: Two.Types.svg,
         width: container.innerWidth,
         height: container.innerHeight,
         autostart: true
@@ -39,6 +43,7 @@ export default function TwoJSManager() {
 
     var svg = document.querySelector("svg#superbeast");
     svg.style.display = "none";
+    this.particleBackground = new ParticleBackground(two)
 
     // MOUSE
     this.mouse = new Two.Vector()
@@ -127,7 +132,7 @@ export default function TwoJSManager() {
     // console.log(this.anchors)
 
 
-
+  
 
 
 
@@ -177,14 +182,17 @@ export default function TwoJSManager() {
 
 
     two.bind("update", (frameCount, timeDelta) => {
-        // if (!timeDelta) {
-        //     return;
-        // }
+        if (!timeDelta) {
+            return;
+        }
 
         this.stats.begin();
 
 
         elapsed += timeDelta;
+
+        this.particleBackground.run(timeDelta)
+
 
 
 
@@ -264,4 +272,6 @@ export default function TwoJSManager() {
 
         this.stats.end()
     });
+
+    Mediator(this)
 }
