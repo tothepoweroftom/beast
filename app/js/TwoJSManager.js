@@ -24,7 +24,7 @@ export default function TwoJSManager() {
     this.mouseControl = true;
     this.growHairs = 0.1
     this.angle = 0.0
-    this.debug = true;
+    this.debug = false;
     this.mouseActive = false
     this.superLogoScale = 1.0
     this.wiggle = Math.PI / 20;

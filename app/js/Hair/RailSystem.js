@@ -71,47 +71,12 @@ export default class RailSystem {
         this.two.remove(this.pointsGroup)
         this.points = []
         this.pointsGroup = new Two.Group()
-        this.two.add(this.pointsGroup)
+        // this.two.add(this.pointsGroup)
         this.setupPoints()
 
     }
 
 
-    mouseLineClosest(mouseLine) {
-
-        this.distance = Number.MAX_VALUE
-        this.highlighted = 0
-        console.log(mouseLine)
-
-        // mouseLine
-       
-
-
-        this.points.forEach((point, i) => {
-
-
-            // console.log(i)
-            let d = distanceToLineSegment(mouseLine.vertices[0].x, mouseLine.vertices[0].y, mouseLine.vertices[1].x, mouseLine.vertices[1].x, point.position.x, point.position.y)
-
-            // let d = distanceToLineSegment(anchor.x, anchor.y, mouse.x, mouse.y, point.position.x, point.position.y)
-            // d<10?console.log(d):null
-            if (d < this.distance) {
-                this.distance = d;
-                this.highlighted = i
-
-            }
-            this.points[i].fill = "green"
-
-
-
-
-
-        })
-        // console.log(this.distance)
-        this.points[this.highlighted].fill = "yellow"
-
-        return this.points[this.highlighted].position.distanceTo(mouseLine.vertices[0])
-    }
 
     checkForClosest(anchor, mouse) {
 
@@ -134,7 +99,7 @@ export default class RailSystem {
                 this.highlighted = i
 
             }
-            this.points[i].fill = "green"
+            // this.points[i].fill = "green"
 
 
 
@@ -142,7 +107,7 @@ export default class RailSystem {
 
         })
         // console.log(this.distance)
-        this.points[this.highlighted].fill = "yellow"
+        // this.points[this.highlighted].fill = "yellow"
 
         return this.points[this.highlighted].position.distanceTo(anchor)
     }

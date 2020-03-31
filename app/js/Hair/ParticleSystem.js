@@ -76,7 +76,7 @@ export default class ParticleSystem {
         this.mouseLine.vertices[1].x = mouse.x
         this.mouseLine.vertices[1].y = mouse.y
         } else {
-            console.log("anchor erro")
+            console.log("anchor error")
         }
 
 
