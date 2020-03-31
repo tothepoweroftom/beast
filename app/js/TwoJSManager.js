@@ -219,8 +219,8 @@ export default function TwoJSManager() {
 
         } else {
             this.superLogoGroup.translation.y = 0
-            this.superLogoGroup.scale = 0.5 + two.width / 3000
-            this.beastLogoGroup.scale = 0.5 + two.width / 3000
+            this.superLogoGroup.scale = 0.3 + two.width / 3000
+            this.beastLogoGroup.scale = 0.3 + two.width / 3000
             this.beastLogoGroup.translation.x = this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
             this.beastLogoGroup.translation.y = 0
 
