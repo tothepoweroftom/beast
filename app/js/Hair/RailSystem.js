@@ -67,6 +67,8 @@ export default class RailSystem {
 
     resize() {
 
+        
+
     }
 
     checkForClosest(anchor, mouse, influenceRadius) {
@@ -75,20 +77,32 @@ export default class RailSystem {
         }
         this.distance = Number.MAX_VALUE
         this.highlighted = 0
+        this.closestVector = null;
 
 
-        this.points.forEach((point, i) => {
+        this.path.vertices.forEach((vertex, i) => {
 
             // if (mouse.distanceTo(point.position) < influenceRadius) {
 
+                if (i % 6 === 0) {
+                    let v = vertex.clone()
+    
+    
+                    
+                    v.addSelf(this.origin);
+                    let d = distanceToLineSegment(anchor.x, anchor.y, mouse.x, mouse.y, v.x, v.y)
+                    if (d < this.distance) {
+                        this.distance = d;
+                        this.closestVector = v
+
+                    }
+                } else {
+                    // this.vertices
+                }
+
 
                 // console.log(i)
-                let d = distanceToLineSegment(anchor.x, anchor.y, mouse.x, mouse.y, point.position.x, point.position.y)
-                if (d < this.distance) {
-                    this.distance = d;
-                    this.highlighted = i
-
-                }
+    
                 // this.points[i].fill = "green"
 
 
@@ -97,10 +111,8 @@ export default class RailSystem {
             // }
         })
 
-        // console.log(this.distance)
-        // this.points[this.highlighted].fill = "yellow"
-
-        return this.points[this.highlighted].position.distanceTo(anchor)
+    
+        return this.closestVector.distanceTo(anchor)
     }
 
 

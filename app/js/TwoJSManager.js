@@ -241,6 +241,7 @@ export default function TwoJSManager() {
                 origin.addSelf(this.superLogoGroup.translation)
 
                 this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
+                group.visible = false
 
                 // let rect = two.makeLine(origin.x, origin.y, 0,0)
                 // rect.stroke = "red"
@@ -251,6 +252,7 @@ export default function TwoJSManager() {
         this.beastLogoGroup.children[0].children.forEach((group) => {
             if (group.id.includes("anchor")) {
                 let childRect = group.getBoundingClientRect()
+                group.visible = false
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
 
                 // origin.normalize()
@@ -275,7 +277,16 @@ export default function TwoJSManager() {
                 console.log("S")
                 origin = origin.multiplyScalar(this.superLogoGroup.scale)
                 origin.addSelf(this.superLogoGroup.translation)
-
+                if(two.width>1024) {
+                    this.influenceRadius = two.width/6
+                    hair.resize(two.width/6, origin, this.superLogoGroup.scale)
+    
+                } else {
+                    this.influenceRadius = two.width/4
+    
+                    hair.resize(two.width/4, origin, this.superLogoGroup.scale)
+    
+                }
 
 
             } else {
@@ -284,18 +295,23 @@ export default function TwoJSManager() {
                 origin = origin.multiplyScalar(this.beastLogoGroup.scale)
                 origin.addSelf(this.beastLogoGroup.translation)
 
+                if(two.width>1024) {
+                    this.influenceRadius = two.width/6
+                    hair.resize(two.width/6, origin, this.beastLogoGroup.scale)
+    
+                } else {
+                    this.influenceRadius = two.width/4
+    
+                    hair.resize(two.width/10, origin, this.beastLogoGroup.scale*0.5)
+    
+                }
+
             }
-            if(two.width>1024) {
-                this.influenceRadius = two.width/6
-                hair.resize(two.width/6, origin)
-
-            } else {
-                this.influenceRadius = two.width/4
-
-                hair.resize(two.width/4, origin)
-
-            }
+           
         })
+
+
+        // Tell
 
         two.scene.translation.set(two.width / 2, two.height / 2);
 
@@ -306,6 +322,7 @@ export default function TwoJSManager() {
 
 
     });
+    two.scene.translation.set(two.width / 2, two.height / 2);
 
     two.trigger("resize")
 

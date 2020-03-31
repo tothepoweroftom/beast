@@ -104,12 +104,14 @@ export default class ParticleSystem {
 
     }
 
-    resize(influenceRadius, shapeOrigin) {
+    resize(influenceRadius, shapeOrigin, scale) {
 
         // this.path.scale = scale
         this.influenceRadius = influenceRadius
        
         this.shapeOrigin = shapeOrigin
+
+        this.scale = scale
 
     }
 
@@ -278,7 +280,8 @@ export default class ParticleSystem {
 
 
     run(mouse, time, growthConstaints, debug, controls) {
-        this.growthConstaint = 100
+        this.growthConstaint = growthConstaints[this.id]*this.scale
+        // console.log(this.growthConstaint)
         this.mouseActive = controls.mouseActive
 
 
