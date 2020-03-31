@@ -54,6 +54,10 @@ export default function TwoJSManager() {
 
     }
 
+    this.angleAnchors = {
+
+    }
+
     this.growthLimits = {
 
     }
@@ -237,7 +241,9 @@ export default function TwoJSManager() {
 
                 console.log(group.children[0].position)
                 // origin.normalize()
-                origin = origin.multiplyScalar(this.superLogoGroup.scale)
+                this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
+
+                origin.multiplyScalar(this.superLogoGroup.scale)
                 origin.addSelf(this.superLogoGroup.translation)
 
                 this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
@@ -254,6 +260,7 @@ export default function TwoJSManager() {
                 let childRect = group.getBoundingClientRect()
                 group.visible = false
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+                this.angleAnchors["beast" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
                 // origin.normalize()
                 origin = origin.multiplyScalar(this.beastLogoGroup.scale)
@@ -264,6 +271,11 @@ export default function TwoJSManager() {
 
 
             }
+        })
+
+
+        railSystems.forEach((rail) => {
+            rail.resize();
         })
 
 
@@ -354,7 +366,10 @@ export default function TwoJSManager() {
         if (frameCount % 2 === 0) {
             this.particleBackground.run(timeDelta)
             railSystems.forEach((rail, i) => {
-                this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse, this.influenceRadius)
+                if(this.angleAnchors[railSystems[i].id]) {
+                    this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.angleAnchors[railSystems[i].id], this.mouse, this.influenceRadius)
+
+                }
 
             })
         }

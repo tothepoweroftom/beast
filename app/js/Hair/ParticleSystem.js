@@ -69,7 +69,7 @@ export default class ParticleSystem {
         this.anchor = anchor
 
         if(anchor) {
-   this.mouseLine.vertices[0].x = anchor.x
+        this.mouseLine.vertices[0].x = anchor.x
         this.mouseLine.vertices[0].y = anchor.y
 
         this.mouseLine.vertices[1].x = mouse.x
@@ -280,7 +280,7 @@ export default class ParticleSystem {
 
 
     run(mouse, time, growthConstaints, debug, controls) {
-        this.growthConstaint = growthConstaints[this.id]*this.scale
+        this.growthConstaint = growthConstaints[this.id]
         // console.log(this.growthConstaint)
         this.mouseActive = controls.mouseActive
 
