@@ -37,7 +37,7 @@ var $window = $(window).bind('mousemove', (e) => {
                 timer=setTimeout(()=>{
                     twoManager.mouseActive = false
 
-                },500);
+                },200);
                 twoManager.mouse.x = -window.innerWidth / 2 + e.clientX;
                 twoManager.mouse.y = -window.innerHeight / 2 + e.clientY;
             }

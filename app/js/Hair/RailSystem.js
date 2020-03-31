@@ -70,7 +70,9 @@ export default class RailSystem {
     }
 
     checkForClosest(anchor, mouse, influenceRadius) {
- 
+        if(!anchor){
+            return
+        }
         this.distance = Number.MAX_VALUE
         this.highlighted = 0
 

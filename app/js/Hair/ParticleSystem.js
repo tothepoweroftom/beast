@@ -68,12 +68,18 @@ export default class ParticleSystem {
     updateMouseLine(anchor, mouse) {
         this.anchor = anchor
 
-
-        this.mouseLine.vertices[0].x = anchor.x
+        if(anchor) {
+   this.mouseLine.vertices[0].x = anchor.x
         this.mouseLine.vertices[0].y = anchor.y
 
         this.mouseLine.vertices[1].x = mouse.x
         this.mouseLine.vertices[1].y = mouse.y
+        } else {
+            console.log("anchor erro")
+        }
+
+
+     
 
 
     }
@@ -98,10 +104,12 @@ export default class ParticleSystem {
 
     }
 
-    resize(scale) {
+    resize(influenceRadius, shapeOrigin) {
 
         // this.path.scale = scale
-
+        this.influenceRadius = influenceRadius
+       
+        this.shapeOrigin = shapeOrigin
 
     }
 
@@ -110,6 +118,8 @@ export default class ParticleSystem {
     setShapeOrigin(origin) {
 
         this.shapeOrigin = origin;
+
+       
 
 
     }
@@ -218,7 +228,7 @@ export default class ParticleSystem {
 
                 this.lineDistance = this.clamp(this.lineDistance, 0, 40)
                 this.lineDistance = this.map_range(this.lineDistance, 0, 40, 90, 0)
-                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint * 0.25) * Math.sin(this.lineDistance * conversion)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint * 0.125) * Math.sin(this.lineDistance * conversion)
 
                 o.subSelf(this.shapeOrigin)
 
@@ -268,7 +278,7 @@ export default class ParticleSystem {
 
 
     run(mouse, time, growthConstaints, debug, controls) {
-        this.growthConstaint = growthConstaints[this.id]
+        this.growthConstaint = 100
         this.mouseActive = controls.mouseActive
 
 
@@ -297,12 +307,12 @@ export default class ParticleSystem {
 
 
                 // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
-                if (this.shapeOrigin.distanceTo(mouse) <= this.influenceRadius) {
-
+                if (mouse.distanceTo(this.shapeOrigin) < this.influenceRadius) {
+// 
                     this.innerCircleBehaviour(mouse, time, controls.wiggle)
 
 
-                } else if (this.shapeOrigin.distanceTo(mouse) > this.influenceRadius) {
+                } else if (mouse.distanceTo(this.shapeOrigin) >= this.influenceRadius) {
 
                     this.standbyBehaviour(mouse, time, controls.wiggle)
 
