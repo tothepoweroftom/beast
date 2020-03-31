@@ -24,13 +24,13 @@ export default function TwoJSManager() {
     this.mouseControl = true;
     this.growHairs = 0.1
     this.angle = 0.0
-    this.debug = false;
+    this.debug = true;
     this.mouseActive = false
     this.superLogoScale = 1.0
     this.wiggle = Math.PI / 20;
     this.retreat = 0.8;
     // this.spacing = 50;
-
+    this.resized = false
 
     /// init Two.js ===================================    
     let container = document.querySelector(".container")
@@ -48,6 +48,7 @@ export default function TwoJSManager() {
     this.influenceRadius = 250;
     var ball = two.makeCircle(two.width / 2, two.height / 2, this.influenceRadius);
     ball.noFill().stroke = 'red';
+    
 
     /// CONTROL STRUCTURES ===================================
     this.anchors = {
@@ -200,7 +201,8 @@ export default function TwoJSManager() {
 
 
 
-
+        this.anchors = {}
+        this.angleAnchors = {}
 
 
 
@@ -209,10 +211,9 @@ export default function TwoJSManager() {
 
             this.superLogoGroup.scale = 0.2 + two.width / 2000
             this.beastLogoGroup.scale = 0.2 + two.width / 2000
-            this.beastLogoGroup.translation.x = 0
-            this.beastLogoGroup.translation.y = +this.beastLogoRect.height / 3 * this.beastLogoGroup.scale
-            this.superLogoGroup.translation.x = -30 * this.beastLogo.scale
-            this.superLogoGroup.translation.y = -this.superLogoRect.height / 3 * this.superLogoGroup.scale
+            this.beastLogoGroup.translation.set(0,this.beastLogoRect.height / 3 * this.beastLogoGroup.scale)
+            this.superLogoGroup.translation.set(-30 * this.beastLogo.scale,  -this.superLogoRect.height / 3 * this.superLogoGroup.scale)
+            
 
 
 
@@ -236,35 +237,55 @@ export default function TwoJSManager() {
         // Anchors resize
         this.superLogoGroup.children[0].children.forEach((group) => {
             if (group.id.includes("anchor")) {
-                let childRect = group.getBoundingClientRect()
+                let childRect = group.children[0].getBoundingClientRect()
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
 
-                console.log(group.children[0].position)
                 // origin.normalize()
                 this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
-                origin.multiplyScalar(this.superLogoGroup.scale)
-                origin.addSelf(this.superLogoGroup.translation)
+                if(!this.resized) {
+                    origin.multiplyScalar(this.superLogoGroup.scale)
+
+                    origin.addSelf(this.superLogoGroup.translation)
+
+                }  else {
+                    origin.subSelf(two.width/2,two.height/2)
+                    this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
+
+                    // let rect = new Two.Rectangle(origin.x, origin.y, childRect.width, childRect.height)
+                    // rect.fill = "red"
+                    // this.superLogoGroup.add(rect)
+
+                }
 
                 this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
                 group.visible = false
 
-                // let rect = two.makeLine(origin.x, origin.y, 0,0)
-                // rect.stroke = "red"
+             
 
             }
         })
 
         this.beastLogoGroup.children[0].children.forEach((group) => {
             if (group.id.includes("anchor")) {
-                let childRect = group.getBoundingClientRect()
+                let childRect = group.children[0].getBoundingClientRect()
                 group.visible = false
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
                 this.angleAnchors["beast" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
-                // origin.normalize()
-                origin = origin.multiplyScalar(this.beastLogoGroup.scale)
-                origin.addSelf(this.beastLogoGroup.translation)
+                if(!this.resized) {
+                    origin.multiplyScalar(this.beastLogoGroup.scale)
+
+                    origin.addSelf(this.beastLogoGroup.translation)
+
+                } else {
+                    origin.subSelf(two.width/2,two.height/2)
+                    
+                    // let rect = new Two.Rectangle(origin.x, origin.y, childRect.width, childRect.height)
+                    // rect.fill = "red"
+                    // this.superLogoGroup.add(rect)
+
+                }
 
                 this.anchors["beast" + group.id.charAt(2).toUpperCase()] = origin
 
@@ -275,7 +296,10 @@ export default function TwoJSManager() {
 
 
         railSystems.forEach((rail) => {
+            if(!this.resized) {
+
             rail.resize();
+            }
         })
 
 
@@ -287,8 +311,17 @@ export default function TwoJSManager() {
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
             if (hair.path.id.charAt(0) === "S") {
                 console.log("S")
-                origin = origin.multiplyScalar(this.superLogoGroup.scale)
-                origin.addSelf(this.superLogoGroup.translation)
+                if(!this.resized) {
+                    origin = origin.multiplyScalar(this.superLogoGroup.scale)
+                    origin.addSelf(this.superLogoGroup.translation)
+
+                }  else {
+                    origin.subSelf(two.width/2,two.height/2)
+
+                
+
+                }
+             
                 if(two.width>1024) {
                     this.influenceRadius = two.width/6
                     hair.resize(two.width/6, origin, this.superLogoGroup.scale)
@@ -304,8 +337,16 @@ export default function TwoJSManager() {
             } else {
                 console.log("B")
 
-                origin = origin.multiplyScalar(this.beastLogoGroup.scale)
-                origin.addSelf(this.beastLogoGroup.translation)
+                if(!this.resized) {
+                    origin = origin.multiplyScalar(this.beastLogoGroup.scale)
+                    origin.addSelf(this.beastLogoGroup.translation)
+
+                }  else {
+                    origin.subSelf(two.width/2,two.height/2)
+
+                
+
+                }
 
                 if(two.width>1024) {
                     this.influenceRadius = two.width/6
@@ -329,12 +370,11 @@ export default function TwoJSManager() {
 
 
 
-
+        this.resized = true;
 
 
 
     });
-    two.scene.translation.set(two.width / 2, two.height / 2);
 
     two.trigger("resize")
 

@@ -68,6 +68,7 @@ export default class ParticleSystem {
     updateMouseLine(anchor, mouse) {
         this.anchor = anchor
 
+
         if(anchor) {
         this.mouseLine.vertices[0].x = anchor.x
         this.mouseLine.vertices[0].y = anchor.y
@@ -80,7 +81,7 @@ export default class ParticleSystem {
 
 
      
-
+        return this.mouseLine.clone()
 
     }
 
