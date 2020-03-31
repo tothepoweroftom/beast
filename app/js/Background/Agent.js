@@ -67,7 +67,7 @@ export function Agent(position, world, two, particleGroup) {
     this.two = two
 	this.boidWeights = { alignment: 1, cohesion: 4, random: 3, separation: 3.6 };
 	this.heading = new Two.Vector();
-	this.maxspeed = 0.1;
+	this.maxspeed = 0.05;
     this.position = position;
     this.translation = new Two.Vector(-this.two.width/2, -this.two.height/2)
     this.view = new Two.Circle(position.x, position.y, 1);
@@ -83,8 +83,8 @@ export function Agent(position, world, two, particleGroup) {
 	this.step = function(dt) {
         // calculate acceleration
         
-        self.accel.x = -1 + 2*noise.pnoise2(self.position.x*0.5, self.position.y, dt*2, dt*2)
-        self.accel.y = -1  + 2*noise.pnoise2(self.position.x, self.position.y, dt*0.5, dt)
+        self.accel.x = -1 + 2*noise.pnoise2(self.position.x, self.position.y, dt, dt)
+        self.accel.y = -1  + 2*noise.pnoise2(self.position.x, self.position.y, dt, dt)
 
 		self.accel.multiplyScalar(self.speed);
 
@@ -109,8 +109,8 @@ export function Agent(position, world, two, particleGroup) {
 
 		// update position
         self.position.addSelf(dv);
-        this.view.position.x = noise.lerp(0.2, self.position.x, self.view.position.x)
-        this.view.position.y = noise.lerp(0.2, self.position.y, self.view.position.y)
+        this.view.position.x = noise.lerp(0.8, self.position.x, self.view.position.x)
+        this.view.position.y = noise.lerp(0.8, self.position.y, self.view.position.y)
 
         // self.position.x
 	}

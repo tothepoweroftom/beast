@@ -14,10 +14,12 @@ export default class ParticleBackground {
 
     this.model = new Model(this.world, two, this.particleGroup);
     this.model.translation = this.translation
-
-
+    this.numParticles = 150
+    if(window.innerWidth<1200) {
+      this.numParticles = 75
+    }
     // spawn 30 by default
-    for (var i = 0; i < 150; ++i) {
+    for (var i = 0; i < this.numParticles; ++i) {
       this.model.spawn();
     }
 
