@@ -299,7 +299,10 @@ export default function TwoJSManager() {
 
         if (frameCount % 2 === 0) {
             this.particleBackground.run(timeDelta)
-
+            railSystems.forEach((rail, i) => {
+                this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
+    
+            })
         }
 
 
@@ -362,10 +365,7 @@ export default function TwoJSManager() {
 
         }
 
-        railSystems.forEach((rail, i) => {
-            this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.anchors[railSystems[i].id], this.mouse)
-
-        })
+  
 
 
 
