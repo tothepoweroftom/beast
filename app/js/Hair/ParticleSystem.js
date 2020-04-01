@@ -5,7 +5,7 @@ import * as _ from 'lodash-es'
 import * as noise from "../Util/Perlin"
 import Two from 'two.js'
 
-let longHairs = ["S_A_hair_01", "S_A_hair_00", "S_B_hair_06", "S_B_hair_01", "S_B_hair_02", "S_B_hair_03", "S_I_hair_01", "B_D_hair_00", "B_A_hair_02", "B_P_hair_00", "B_S_hair_01", "B_N_hair_01"]
+let longHairs = ["S_A_hair_01", "S_A_hair_00", "S_B_hair_00", "S_B_hair_01", "S_B_hair_02", "S_B_hair_03", "S_I_hair_01", "B_D_hair_00", "B_A_hair_02", "B_P_hair_00", "B_S_hair_01", "B_N_hair_01"]
 let conversion = Math.PI / 180
 
 
@@ -78,19 +78,16 @@ export default class ParticleSystem {
         this.anchor = anchor
 
 
-        if (anchor) {
-            this.mouseLine.vertices[0].x = anchor.x
-            this.mouseLine.vertices[0].y = anchor.y
+        // if (anchor) {
+        //     this.mouseLine.vertices[0].x = anchor.x
+        //     this.mouseLine.vertices[0].y = anchor.y
 
-            this.mouseLine.vertices[1].x = mouse.x
-            this.mouseLine.vertices[1].y = mouse.y
-        } else {
-            console.log("anchor error")
-        }
+        //     this.mouseLine.vertices[1].x = mouse.x
+        //     this.mouseLine.vertices[1].y = mouse.y
+        // } else {
+        //     console.log("anchor error")
+        // }
 
-
-
-        return this.mouseLine.clone()
 
     }
 
@@ -125,7 +122,7 @@ export default class ParticleSystem {
         if (longHairs.includes(this.path.id) ) {
             this.hairmuliplier = 3 
             if(this.two.width < 1024){
-                this.hairmuliplier = 5
+                this.hairmuliplier = 4
             }
             this.influenceRadius = 2*influenceRadius
             // alert()

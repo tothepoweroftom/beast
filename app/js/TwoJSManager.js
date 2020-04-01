@@ -27,7 +27,7 @@ export default function TwoJSManager() {
     this.debug = false;
     this.mouseActive = false
     this.superLogoScale = 1.0
-    this.wiggle = Math.PI / 20;
+    this.wiggle = 0.23;
     this.retreat = 0.8;
     // this.spacing = 50;
     this.resized = false
@@ -399,11 +399,11 @@ export default function TwoJSManager() {
 
     two.bind("update", (frameCount, timeDelta) => {
 
+      
+        this.stats.begin();
         if (!frameCount) {
             return
         }
-        this.stats.begin();
-
 
         elapsed += timeDelta;
 
