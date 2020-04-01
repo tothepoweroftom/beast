@@ -29,6 +29,7 @@ export default function TwoJSManager() {
     this.superLogoScale = 1.0
     this.wiggle = 0.23;
     this.retreat = 0.8;
+   
     // this.spacing = 50;
     this.resized = false
 
@@ -41,7 +42,9 @@ export default function TwoJSManager() {
         autostart: true
     }).appendTo(document.querySelector(".container"));
     this.particleBackground = new ParticleBackground(two)
-
+    if(two.width<1024) {
+        this.retreat = 0.5
+    }
     // Mouse Controls ========================================
     this.mouse = new Two.Vector()
     this.influenceRadius = 250;
@@ -409,7 +412,7 @@ export default function TwoJSManager() {
 
         // console.log(frameCount)
 
-        if (frameCount % 4 === 0) {
+        if (frameCount % 3 === 0 && two.width>1024) {
             this.particleBackground.run(timeDelta)
             // railSystems.forEach((rail, i) => {
             //     if(this.angleAnchors[railSystems[i].id]) {

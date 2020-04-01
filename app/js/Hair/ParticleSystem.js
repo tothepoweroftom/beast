@@ -49,7 +49,7 @@ export default class ParticleSystem {
         this.growthConstant = 40;
         this.anchor;
         this.extraLength = 0
-        this.hairmuliplier = 1
+        this.hairmuliplier = 0.8
 
         if (longHairs.includes(this.path.id)) {
             this.hairmuliplier = 3
@@ -58,7 +58,7 @@ export default class ParticleSystem {
 
         this.mouseActive = false;
 
-
+        this.mode = true
 
 
     }
@@ -119,10 +119,15 @@ export default class ParticleSystem {
         this.shapeOrigin = shapeOrigin
 
         this.scale = scale
+        if(this.two.width < 1024){
+            this.hairmuliplier = 1.5
+        }
+
         if (longHairs.includes(this.path.id) ) {
-            this.hairmuliplier = 3 
+            this.hairmuliplier = 4
             if(this.two.width < 1024){
-                this.hairmuliplier = 4
+                this.hairmuliplier = 5
+                this.mode = false
             }
             this.influenceRadius = 2*influenceRadius
             // alert()
