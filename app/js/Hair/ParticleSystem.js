@@ -5,8 +5,11 @@ import * as _ from 'lodash-es'
 import * as noise from "../Util/Perlin"
 import Two from 'two.js'
 
-let specialCase = ["hair07", "hair06", "hair34"]
+let longHairs = ["S_A_hair_01", "S_A_hair_00", "S_B_hair_06", "S_B_hair_01", "S_B_hair_02", "S_B_hair_03", "S_I_hair_01", "B_D_hair_00", "B_A_hair_02", "B_P_hair_00", "B_S_hair_01", "B_N_hair_01"]
 let conversion = Math.PI / 180
+
+
+
 
 
 export default class ParticleSystem {
@@ -14,7 +17,7 @@ export default class ParticleSystem {
 
         this.scale = 1;
         this.two = two
-        this.influenceRadius = 250;
+        this.influenceRadius = two.width / 6;
         this.shapeOrigin = null
         this.specialOrigin = new Two.Vector(0, 0)
         this.path = TwoPath
@@ -43,9 +46,15 @@ export default class ParticleSystem {
         // this.pointsGroup = new Two.Group()
         this.originalLengths = []
         this.lineDistance = 0
-        this.growthConstaint = 10;
+        this.growthConstant = 40;
         this.anchor;
         this.extraLength = 0
+        this.hairmuliplier = 1
+
+        if (longHairs.includes(this.path.id)) {
+            this.hairmuliplier = 3
+            // alert()
+        }
 
         this.mouseActive = false;
 
@@ -69,18 +78,18 @@ export default class ParticleSystem {
         this.anchor = anchor
 
 
-        if(anchor) {
-        this.mouseLine.vertices[0].x = anchor.x
-        this.mouseLine.vertices[0].y = anchor.y
+        if (anchor) {
+            this.mouseLine.vertices[0].x = anchor.x
+            this.mouseLine.vertices[0].y = anchor.y
 
-        this.mouseLine.vertices[1].x = mouse.x
-        this.mouseLine.vertices[1].y = mouse.y
+            this.mouseLine.vertices[1].x = mouse.x
+            this.mouseLine.vertices[1].y = mouse.y
         } else {
             console.log("anchor error")
         }
 
 
-     
+
         return this.mouseLine.clone()
 
     }
@@ -109,11 +118,18 @@ export default class ParticleSystem {
 
         // this.path.scale = scale
         this.influenceRadius = influenceRadius
-       
+
         this.shapeOrigin = shapeOrigin
 
         this.scale = scale
-
+        if (longHairs.includes(this.path.id) ) {
+            this.hairmuliplier = 3 
+            if(this.two.width < 1024){
+                this.hairmuliplier = 5
+            }
+            this.influenceRadius = 2*influenceRadius
+            // alert()
+        }
     }
 
 
@@ -122,7 +138,7 @@ export default class ParticleSystem {
 
         this.shapeOrigin = origin;
 
-       
+
 
 
     }
@@ -196,7 +212,7 @@ export default class ParticleSystem {
                 this.extraLength = o.distanceTo(this.anchor)
                 this.lineDistance = this.clamp(this.lineDistance, 0, 30)
                 this.lineDistance = this.map_range(this.lineDistance, 0, 30, 90, 0)
-                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint) * Math.sin(this.lineDistance * conversion)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstant * this.hairmuliplier) * Math.sin(this.lineDistance * conversion)
 
                 o.subSelf(this.shapeOrigin)
 
@@ -224,14 +240,14 @@ export default class ParticleSystem {
 
                 let v = this.displayed.vertices[i]
                 this.oldPos[i] = v
-                this.difference = noise.noise2(time * v.x, time * v.y) 
+                this.difference = noise.noise2(time * v.x, time * v.y)
                 let o = this.origin.vertices[i]
                 o.addSelf(this.shapeOrigin)
                 this.lineDistance = distanceToLineSegment(this.anchor.x, this.anchor.y, mouse.x, mouse.y, o.x, o.y)
 
                 this.lineDistance = this.clamp(this.lineDistance, 0, 40)
                 this.lineDistance = this.map_range(this.lineDistance, 0, 40, 90, 0)
-                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstaint * 0.125) * Math.sin(this.lineDistance * conversion)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstant * 0.125) * Math.sin(this.lineDistance * conversion)
 
                 o.subSelf(this.shapeOrigin)
 
@@ -265,7 +281,7 @@ export default class ParticleSystem {
 
 
                 v.x = this.lerp(o.x, this.oldPos[i].x, retreat);
-                v.y= this.lerp(o.y, this.oldPos[i].y, retreat);
+                v.y = this.lerp(o.y, this.oldPos[i].y, retreat);
 
                 this.oldPos[i] = v
 
@@ -280,9 +296,9 @@ export default class ParticleSystem {
 
 
 
-    run(mouse, time, growthConstaints, debug, controls) {
-        this.growthConstaint = growthConstaints[this.id]
-        // console.log(this.growthConstaint)
+    run(mouse, time, growthConstants, debug, controls) {
+        this.growthConstant = 30*(1/this.scale)
+        // console.log(this.growthConstant)
         this.mouseActive = controls.mouseActive
 
 
@@ -306,26 +322,26 @@ export default class ParticleSystem {
             this.theta = Math.atan2((mouse.y - this.anchor.y), (mouse.x - this.anchor.x))
             this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
 
-          
-            if (this.mouseActive) {
 
+            if (this.mouseActive) {
+                let d = mouse.distanceTo(this.shapeOrigin)
 
                 // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
-                if (mouse.distanceTo(this.shapeOrigin) < this.influenceRadius) {
-// 
+                if (d < this.influenceRadius) {
+                    // 
                     this.innerCircleBehaviour(mouse, time, controls.wiggle)
+                
 
-
-                } else if (mouse.distanceTo(this.shapeOrigin) >= this.influenceRadius) {
-
+                } else if (d >= this.influenceRadius) {
+                
                     this.standbyBehaviour(mouse, time, controls.wiggle)
 
                 }
             } else {
 
-                this.noMouse(mouse, controls.retreat, time) 
+                this.noMouse(mouse, controls.retreat, time)
 
-                
+
 
             }
         }

@@ -93,15 +93,14 @@ export function Agent(position, world, two, particleGroup) {
 		// self.velocity.addSelf(self.accel);
 
 		// apply dampener
-		// self.velocity.multiplyScalar(0.995);
+		self.velocity.multiplyScalar(0.995);
 
 		// clamp velocity
 		self.velocity.x = Math.max(-self.maxspeed, Math.min(self.velocity.x, self.maxspeed));
 		self.velocity.y = Math.max(-self.maxspeed, Math.min(self.velocity.y, self.maxspeed));
 
 		// update heading
-		self.heading.copy(self.velocity);
-		self.heading.normalize();
+	
 
 		// multiply by dt
 		var dv = self.velocity.clone();

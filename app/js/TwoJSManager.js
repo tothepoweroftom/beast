@@ -36,7 +36,6 @@ export default function TwoJSManager() {
     let container = document.querySelector(".container")
     var two = new Two({
         fullscreen: true,
-        type: Two.Types.svg,
         width: container.innerWidth,
         height: container.innerHeight,
         autostart: true
@@ -91,12 +90,15 @@ export default function TwoJSManager() {
             if (superLogo.children[i].id.includes("hair")) {
 
                 if (superLogo.children[i].children[0]) {
+                    // superLogo.children[i].fill = "#02f768"
+                    // superLogo.children[i].stroke = "#02f768"
                     let childRect = superLogo.children[i].children[0].getBoundingClientRect()
                     let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
                     let hairsystem = new ParticleSystem(two, origin, superLogo.children[i], i)
                     hairsystem.setID("super" + superLogo.children[i].id.charAt(2).toUpperCase())
                     colorClasses.push(superLogo.children[i].children[0].fill)
                     hairSystems.push(hairsystem)
+                  
                 }
 
             } else if (superLogo.children[i].id.includes("anchor")) {
@@ -118,6 +120,8 @@ export default function TwoJSManager() {
             } else if (superLogo.children[i].id.includes("base")) {
 
                 bases.push(superLogo.children[i])
+                // superLogo.children[i].fill = "#02f768"
+                //     superLogo.children[i].stroke = "#02f768"
 
             }
         }
@@ -146,6 +150,8 @@ export default function TwoJSManager() {
             //  Check if it is a hairs patch
             if (this.beastLogo.children[i].id.includes("hair")) {
                 if (this.beastLogo.children[i].children[0]) {
+                    // this.beastLogo.children[i].fill = "#02f768"
+                    // this.beastLogo.children[i].stroke = "#02f768"
 
                     let childRect = this.beastLogo.children[i].children[0].getBoundingClientRect()
                     let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
@@ -153,7 +159,7 @@ export default function TwoJSManager() {
                     hairsystem.setID("beast" + this.beastLogo.children[i].id.charAt(2).toUpperCase())
                     colorClasses.push(this.beastLogo.children[i].children[0].fill)
                     hairSystems.push(hairsystem)
-
+            
                 }
             } else if (this.beastLogo.children[i].id.includes("anchor")) {
 
@@ -175,6 +181,8 @@ export default function TwoJSManager() {
             } else if (this.beastLogo.children[i].id.includes("base")) {
 
                 bases.push(this.beastLogo.children[i])
+                // this.beastLogo.children[i].fill = "#02f768"
+                //         hair.path.stroke = "#02f768""
 
             }
         }
@@ -229,7 +237,7 @@ export default function TwoJSManager() {
 
             this.superLogoGroup.translation.x = -this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
             // this.influenceRadius = two.width/10
-            this.influenceRadius = two.width / 10
+            this.influenceRadius = two.width / 1
 
         }
 
@@ -252,9 +260,7 @@ export default function TwoJSManager() {
                     origin.subSelf(two.width/2,two.height/2)
                     this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
-                    // let rect = new Two.Rectangle(origin.x, origin.y, childRect.width, childRect.height)
-                    // rect.fill = "red"
-                    // this.superLogoGroup.add(rect)
+           
 
                 }
 
@@ -324,12 +330,12 @@ export default function TwoJSManager() {
              
                 if(two.width>1024) {
                     this.influenceRadius = two.width/6
-                    hair.resize(two.width/6, origin, this.superLogoGroup.scale)
+                    hair.resize(two.width/8, origin, this.superLogoGroup.scale)
     
                 } else {
                     this.influenceRadius = two.width/4
     
-                    hair.resize(two.width/4, origin, this.superLogoGroup.scale)
+                    hair.resize(two.width/6, origin, this.superLogoGroup.scale)
     
                 }
 
@@ -350,12 +356,12 @@ export default function TwoJSManager() {
 
                 if(two.width>1024) {
                     this.influenceRadius = two.width/6
-                    hair.resize(two.width/6, origin, this.beastLogoGroup.scale)
+                    hair.resize(two.width/8, origin, this.beastLogoGroup.scale)
     
                 } else {
                     this.influenceRadius = two.width/4
     
-                    hair.resize(two.width/10, origin, this.beastLogoGroup.scale*0.5)
+                    hair.resize(two.width/6, origin, this.beastLogoGroup.scale)
     
                 }
 
@@ -403,15 +409,15 @@ export default function TwoJSManager() {
 
         // console.log(frameCount)
 
-        if (frameCount % 2 === 0) {
+        if (frameCount % 4 === 0) {
             this.particleBackground.run(timeDelta)
-            railSystems.forEach((rail, i) => {
-                if(this.angleAnchors[railSystems[i].id]) {
-                    this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.angleAnchors[railSystems[i].id], this.mouse, this.influenceRadius)
+            // railSystems.forEach((rail, i) => {
+            //     if(this.angleAnchors[railSystems[i].id]) {
+            //         this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.angleAnchors[railSystems[i].id], this.mouse, this.influenceRadius)
 
-                }
+            //     }
 
-            })
+            // })
         }
 
 
