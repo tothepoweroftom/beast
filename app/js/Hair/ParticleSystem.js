@@ -52,7 +52,7 @@ export default class ParticleSystem {
         this.hairmuliplier = 0.8
 
         if (longHairs.includes(this.path.id)) {
-            this.hairmuliplier = 3
+            this.hairmuliplier = 2
             // alert()
         }
 
@@ -126,7 +126,7 @@ export default class ParticleSystem {
         if (longHairs.includes(this.path.id) ) {
             this.hairmuliplier = 4
             if(this.two.width < 1024){
-                this.hairmuliplier = 5
+                this.hairmuliplier = 2
                 this.mode = false
             }
             this.influenceRadius = 2*influenceRadius
@@ -219,8 +219,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
 
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * wiggle), this.oldPos[i].x, 0.02);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * wiggle), this.oldPos[i].y, 0.02);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * wiggle), this.oldPos[i].x, 0.85);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * wiggle), this.oldPos[i].y, 0.85);
 
                 this.oldPos[i] = v
 
@@ -254,8 +254,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
 
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * wiggle), this.oldPos[i].x, 0.3);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * wiggle), this.oldPos[i].y, 0.3);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * wiggle), this.oldPos[i].x, 0.9);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * wiggle), this.oldPos[i].y, 0.9);
 
                 this.oldPos[i] = v
 
