@@ -61,7 +61,7 @@ export function boids(agent, world, weights) {
 
 	return force;
 }
-const colors = ["#ff00ff", "#00ff00", "yellow"]
+const colors = ["#181818", "#000000"]
 export function Agent(position, world, two, particleGroup) {
 	var self = this;
     this.two = two

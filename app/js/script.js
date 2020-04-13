@@ -11,12 +11,6 @@ $( document ).ready(()=> {
     //console.log( "ready!" );
     twoManager = new TwoJSManager();
 
-    var gui = new dat.GUI();
-    // gui.hide()
-    gui.add(twoManager, 'debug');
-    gui.add(twoManager, 'retreat', 0.5, 0.95);
-    gui.add(twoManager, 'wiggle', 0.01, 1.5);
-
     // gui.add(twoManager, 'mouseActive');
 
 

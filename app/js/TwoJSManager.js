@@ -1,9 +1,9 @@
 import Two from 'two.js'
 import ParticleSystem from './Hair/ParticleSystem'
 import RailSystem from './Hair/RailSystem'
-
-import Stats from 'stats.js'
 import ParticleBackground from './Background/ParticleBackground'
+import Stats from 'stats.js'
+
 
 
 let colorClasses = []
@@ -13,10 +13,7 @@ let railSystems = []
 let bases = [];
 
 export default function TwoJSManager() {
-    this.stats = new Stats();
-    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild(this.stats.dom);
-
+    // 0: fps, 1: ms, 2: mb, 3+: custom
 
     // DAT.GUI CONTROLS
     ////////////////////////////////////////////////////////////////////////////////////
@@ -27,8 +24,9 @@ export default function TwoJSManager() {
     this.debug = false;
     this.mouseActive = false
     this.superLogoScale = 1.0
-    this.wiggle = Math.PI / 20;
+    this.wiggle = 0.23;
     this.retreat = 0.8;
+   
     // this.spacing = 50;
     this.resized = false
 
@@ -41,7 +39,9 @@ export default function TwoJSManager() {
         autostart: true
     }).appendTo(document.querySelector(".container"));
     this.particleBackground = new ParticleBackground(two)
-
+    if(two.width<1024) {
+        this.retreat = 0.5
+    }
     // Mouse Controls ========================================
     this.mouse = new Two.Vector()
     this.influenceRadius = 250;
@@ -62,9 +62,9 @@ export default function TwoJSManager() {
 
     }
 
-    //Make Groups for Each SVG Logo
+    // //Make Groups for Each SVG Logo
     this.superLogoGroup = new Two.Group();
-    two.add(this.superLogoGroup);
+    // two.add(this.superLogoGroup);
     this.beastLogoGroup = new Two.Group();
     two.add(this.beastLogoGroup);
 
@@ -188,7 +188,7 @@ export default function TwoJSManager() {
         }
     }
 
-    loadSuper()
+    // loadSuper()
     loadBeast()
 
 
@@ -217,10 +217,10 @@ export default function TwoJSManager() {
         if (window.innerWidth < 1024) {
             this.influenceRadius = two.width / 5
 
-            this.superLogoGroup.scale = 0.2 + two.width / 2000
-            this.beastLogoGroup.scale = 0.2 + two.width / 2000
-            this.beastLogoGroup.translation.set(0,this.beastLogoRect.height / 3 * this.beastLogoGroup.scale)
-            this.superLogoGroup.translation.set(-30 * this.beastLogo.scale,  -this.superLogoRect.height / 3 * this.superLogoGroup.scale)
+            this.superLogoGroup.scale = 0.3 + two.width / 2000
+            this.beastLogoGroup.scale = 0.3 + two.width / 2000
+            // this.beastLogoGroup.translation.set(0,this.beastLogoRect.height / 3 * this.beastLogoGroup.scale)
+            // this.superLogoGroup.translation.set(-30 * this.beastLogo.scale,  -this.superLogoRect.height / 3 * this.superLogoGroup.scale)
             
 
 
@@ -228,49 +228,49 @@ export default function TwoJSManager() {
 
         } else {
             this.superLogoGroup.translation.y = 0
-            this.superLogoGroup.scale = 0.3 + two.width / 3000
-            this.beastLogoGroup.scale = 0.3 + two.width / 3000
-            this.beastLogoGroup.translation.x = this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
-            this.beastLogoGroup.translation.y = 0
+            this.superLogoGroup.scale = 0.5 + two.width / 3000
+            this.beastLogoGroup.scale = 0.5 + two.width / 3000
+            // this.beastLogoGroup.translation.x = this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
+            // this.beastLogoGroup.translation.y = 0
 
-            this.superLogoGroup.translation.y = 0
+            // this.superLogoGroup.translation.y = 0
 
-            this.superLogoGroup.translation.x = -this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
+            // this.superLogoGroup.translation.x = -this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
             // this.influenceRadius = two.width/10
             this.influenceRadius = two.width / 1
 
         }
 
 
-        // Anchors resize
-        this.superLogoGroup.children[0].children.forEach((group) => {
-            if (group.id.includes("anchor")) {
-                let childRect = group.children[0].getBoundingClientRect()
-                let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
+        // // Anchors resize
+        // this.superLogoGroup.children[0].children.forEach((group) => {
+        //     if (group.id.includes("anchor")) {
+        //         let childRect = group.children[0].getBoundingClientRect()
+        //         let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
 
-                // origin.normalize()
-                this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
+        //         // origin.normalize()
+        //         this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
-                if(!this.resized) {
-                    origin.multiplyScalar(this.superLogoGroup.scale)
+        //         if(!this.resized) {
+        //             origin.multiplyScalar(this.superLogoGroup.scale)
 
-                    origin.addSelf(this.superLogoGroup.translation)
+        //             origin.addSelf(this.superLogoGroup.translation)
 
-                }  else {
-                    origin.subSelf(two.width/2,two.height/2)
-                    this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
+        //         }  else {
+        //             origin.subSelf(two.width/2,two.height/2)
+        //             this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
 
            
 
-                }
+        //         }
 
-                this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
-                group.visible = false
+        //         this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
+        //         group.visible = false
 
              
 
-            }
-        })
+        //     }
+        // })
 
         this.beastLogoGroup.children[0].children.forEach((group) => {
             if (group.id.includes("anchor")) {
@@ -380,6 +380,7 @@ export default function TwoJSManager() {
 
 
 
+
     });
 
     two.trigger("resize")
@@ -399,26 +400,25 @@ export default function TwoJSManager() {
 
     two.bind("update", (frameCount, timeDelta) => {
 
+      
         if (!frameCount) {
             return
         }
-        this.stats.begin();
-
 
         elapsed += timeDelta;
 
         // console.log(frameCount)
+            this.particleBackground.run(timeDelta, this.mouse)
 
-        if (frameCount % 4 === 0) {
-            this.particleBackground.run(timeDelta)
-            // railSystems.forEach((rail, i) => {
-            //     if(this.angleAnchors[railSystems[i].id]) {
-            //         this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.angleAnchors[railSystems[i].id], this.mouse, this.influenceRadius)
+        // if (frameCount % 3 === 0 && two.width>1024) {
+        //     // railSystems.forEach((rail, i) => {
+        //     //     if(this.angleAnchors[railSystems[i].id]) {
+        //     //         this.growthLimits[railSystems[i].id] = railSystems[i].checkForClosest(this.angleAnchors[railSystems[i].id], this.mouse, this.influenceRadius)
 
-            //     }
+        //     //     }
 
-            // })
-        }
+        //     // })
+        // }
 
 
 
@@ -434,8 +434,8 @@ export default function TwoJSManager() {
                 //////////console.log(hair)
                 hair.mouseLine.visible = false;
 
-                hair.path.fill = "#02f768"
-                hair.path.stroke = "#02f768"
+                hair.path.fill = "#000000"
+                hair.path.stroke = "#000000"
 
             })
 
@@ -444,11 +444,11 @@ export default function TwoJSManager() {
             })
             // mouseLine.visible = false
             bases.forEach((base) => {
-                base.fill = "#02f768"
+                base.fill = "#000"
 
             })
 
-            this.superLogoRect.visible = false
+            // this.superLogoRect.visible = false
 
         } else if (this.debug && ball.visible === false) {
             ball.visible = true;
@@ -499,8 +499,9 @@ export default function TwoJSManager() {
         ball.radius = this.influenceRadius
 
 
+        this.beastLogoGroup.translation.x =  this.mouse.x*0.005
+        this.beastLogoGroup.translation.y =  this.mouse.y*0.005
 
-        this.stats.end()
     });
 
 }
