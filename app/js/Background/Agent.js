@@ -83,8 +83,8 @@ export function Agent(position, world, two, particleGroup) {
 	this.step = function(dt, mouse) {
         // calculate acceleration
         
-        self.accel.x = mouse.x*0.0001 + 0.00001* noise.pnoise2(self.position.x, self.position.y, dt, dt)
-        self.accel.y = mouse.y*0.0001 + 0.00001* noise.pnoise2(self.position.x, self.position.y, dt, dt)
+        self.accel.x = mouse.x*0.001 
+        self.accel.y = mouse.y*0.001 
 
 		self.accel.multiplyScalar(self.speed);
 

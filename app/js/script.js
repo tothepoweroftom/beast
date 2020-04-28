@@ -42,6 +42,8 @@ var $window = $(window).bind('mousemove', (e) => {
         e.preventDefault();
         window.scrollTo(0, 0)
         if(twoManager) {
+            $('.title').hide(500)
+            twoManager.growHairs()
             var touch = e.originalEvent.changedTouches[0];
 
             twoManager.mouse.x = -window.innerWidth / 2 + touch.pageX;
@@ -61,6 +63,13 @@ var $window = $(window).bind('mousemove', (e) => {
     })
     .bind('mousedown', function (e) {
         e.preventDefault();
+
+
+    })
+    .bind('click', function (e) {
+        $('.title').hide(500)
+        twoManager.growHairs()
+
 
 
     })

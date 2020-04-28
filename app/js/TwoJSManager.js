@@ -3,6 +3,7 @@ import ParticleSystem from './Hair/ParticleSystem'
 import RailSystem from './Hair/RailSystem'
 import ParticleBackground from './Background/ParticleBackground'
 import Stats from 'stats.js'
+import {TweenLite} from 'gsap'
 
 
 
@@ -21,7 +22,7 @@ export default function TwoJSManager() {
     ////////////////////////////////////////////////////////////////////////////////////
     this.controlData = {}
     this.mouseControl = true;
-    this.growHairs = 0.1
+    // this.growHairs = 0.1
     this.angle = 0.0
     this.debug = false;
     this.mouseActive = false
@@ -42,6 +43,7 @@ export default function TwoJSManager() {
         autostart: true
     }).appendTo(document.querySelector(".container"));
     this.particleBackground = new ParticleBackground(two)
+    this.particleBackground.particleGroup.opacity = 0
     if (two.width < 1024) {
         this.retreat = 0.5
     }
@@ -118,6 +120,35 @@ export default function TwoJSManager() {
 
 
 
+    this.growHairs = ()=> {
+
+
+        hairSystems.forEach((hair, i) => {
+            setTimeout(()=>{
+                hair.growHairs()
+
+            }, i*150 )
+           
+
+
+        })
+        let scale = this.beastLogoGroup.scale
+        TweenLite.to(this.beastLogoGroup, .5, {
+            scale: scale*1.1, 
+            onComplete: ()=>{
+                TweenLite.to(this.beastLogoGroup, 0.5, {
+                    scale: scale,
+                })
+            }
+        })
+
+        TweenLite.to(this.particleBackground.particleGroup, 0.5, {
+            opacity:1
+        })
+
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                         //
     //                      RESIZING FUNCTION                                                  //
@@ -142,8 +173,8 @@ export default function TwoJSManager() {
         if (window.innerWidth < 1024) {
             this.influenceRadius = two.width / 5
 
-            this.superLogoGroup.scale = 0.3 + two.width / 2000
-            // this.beastLogoGroup.translation.set(0,this.beastLogoRect.height / 3 * this.beastLogoGroup.scale)
+            // this.superLogoGroup.scale = 0.3 + two.width / 2000
+            this.beastLogoGroup.translation.x = -10
             // this.superLogoGroup.translation.set(-30 * this.beastLogo.scale,  -this.superLogoRect.height / 3 * this.superLogoGroup.scale)
 
 
@@ -154,7 +185,7 @@ export default function TwoJSManager() {
             this.superLogoGroup.translation.y = 0
             this.superLogoGroup.scale = 0.5 + two.width / 3000
 
-            this.influenceRadius = two.width / 20
+            this.influenceRadius = 5
 
         }
 
