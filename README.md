@@ -5,4 +5,4 @@ npm i
 npm start
 
 ```
-![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![alt text](https://raw.githubusercontent.com/tothepoweroftom/beast/master/hairy.gif)
