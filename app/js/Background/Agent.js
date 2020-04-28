@@ -67,24 +67,24 @@ export function Agent(position, world, two, particleGroup) {
     this.two = two
 	this.boidWeights = { alignment: 1, cohesion: 4, random: 3, separation: 3.6 };
 	this.heading = new Two.Vector();
-	this.maxspeed = 0.05;
+	this.maxspeed = 0.5;
     this.position = position;
     this.translation = new Two.Vector(-this.two.width/2, -this.two.height/2)
     this.view = new Two.Circle(position.x, position.y, 1);
     this.view.fill = colors[Math.floor(Math.random()*colors.length)]
     this.view.stroke = "rgba(0,0,0,0)"
     // this.view.noStroke()
-	this.speed = 0.005;
+	this.speed = 0.05;
     this.velocity = new Two.Vector();
     particleGroup.add(this.view)
     // this.random = new Two.Vector(-2 + noise.noise2(Math.random(), Math.random()), -2 + noise.noise2(Math.random(), Math.random())*2)
     this.accel = new Two.Vector(0,0)
 
-	this.step = function(dt) {
+	this.step = function(dt, mouse) {
         // calculate acceleration
         
-        self.accel.x = -1 + 2*noise.pnoise2(self.position.x, self.position.y, dt, dt)
-        self.accel.y = -1  + 2*noise.pnoise2(self.position.x, self.position.y, dt, dt)
+        self.accel.x = mouse.x*0.0001 + 0.00001* noise.pnoise2(self.position.x, self.position.y, dt, dt)
+        self.accel.y = mouse.y*0.0001 + 0.00001* noise.pnoise2(self.position.x, self.position.y, dt, dt)
 
 		self.accel.multiplyScalar(self.speed);
 
@@ -108,8 +108,8 @@ export function Agent(position, world, two, particleGroup) {
 
 		// update position
         self.position.addSelf(dv);
-        this.view.position.x = noise.lerp(0.8, self.position.x, self.view.position.x)
-        this.view.position.y = noise.lerp(0.8, self.position.y, self.view.position.y)
+        this.view.position.x = noise.lerp(0.5, self.position.x, self.view.position.x)
+        this.view.position.y = noise.lerp(0.5, self.position.y, self.view.position.y)
 
         // self.position.x
 	}

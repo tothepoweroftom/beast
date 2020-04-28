@@ -27,10 +27,10 @@ export default class ParticleBackground {
   
 
   run(dt, mouse) {
-    this.model.step(dt)
+    this.model.step(dt, mouse)
     // console.log(this.model)
-    this.particleGroup.translation.x = -this.two.width/2 + mouse.x*0.02
-    this.particleGroup.translation.y = -this.two.height/2 + mouse.y*0.02
+    // this.particleGroup.translation.x = -this.two.width/2 + mouse.x*0.02
+    // this.particleGroup.translation.y = -this.two.height/2 + mouse.y*0.02
 
   }
 

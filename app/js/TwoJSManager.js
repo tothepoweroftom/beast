@@ -12,6 +12,8 @@ let hairSystems = []
 let railSystems = []
 let bases = [];
 
+let anchorlist = ["head", "leg", "leftarm", "rightarm"]
+
 export default function TwoJSManager() {
     // 0: fps, 1: ms, 2: mb, 3+: custom
 
@@ -24,11 +26,12 @@ export default function TwoJSManager() {
     this.debug = false;
     this.mouseActive = false
     this.superLogoScale = 1.0
-    this.wiggle = 0.23;
-    this.retreat = 0.8;
-   
+    this.wiggle = 0.83;
+    this.retreat = 0.9;
+
     // this.spacing = 50;
     this.resized = false
+    this.eye;
 
     /// init Two.js ===================================    
     let container = document.querySelector(".container")
@@ -39,7 +42,7 @@ export default function TwoJSManager() {
         autostart: true
     }).appendTo(document.querySelector(".container"));
     this.particleBackground = new ParticleBackground(two)
-    if(two.width<1024) {
+    if (two.width < 1024) {
         this.retreat = 0.5
     }
     // Mouse Controls ========================================
@@ -47,7 +50,7 @@ export default function TwoJSManager() {
     this.influenceRadius = 250;
     var ball = two.makeCircle(two.width / 2, two.height / 2, this.influenceRadius);
     ball.noFill().stroke = 'red';
-    
+
 
     /// CONTROL STRUCTURES ===================================
     this.anchors = {
@@ -70,18 +73,16 @@ export default function TwoJSManager() {
 
     // Load Super Logo
 
-    const loadSuper = () => {
-        var svg = document.querySelector("svg#super");
+    const loadCyclops = () => {
+        var svg = document.querySelector("svg#cyclops");
         svg.style.display = "none";
         var superLogo = two.interpret(svg);
         superLogo.center()
+        superLogo.translation.y = -100
         two.remove(superLogo)
-        this.superLogoGroup.add(superLogo);
+        this.beastLogoGroup.add(superLogo);
         var rect = superLogo.getBoundingClientRect();
-        this.superLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
-        this.superLogoRect.stroke = "#ff00ff"
-        this.superLogoRect.fill = "rgba(0,0,0,0)"
-        this.superLogoGroup.add(this.superLogoRect);
+
 
         // PARSE OUT THE HAIR SLUGS -------------------------------------------------------------------------------------------
         for (let i = 0; i < superLogo.children.length; i++) {
@@ -90,106 +91,30 @@ export default function TwoJSManager() {
             if (superLogo.children[i].id.includes("hair")) {
 
                 if (superLogo.children[i].children[0]) {
-                    // superLogo.children[i].fill = "#02f768"
-                    // superLogo.children[i].stroke = "#02f768"
+                    superLogo.children[i].fill = "#02f768"
+
+                    superLogo.children[i].stroke = "#02f768"
                     let childRect = superLogo.children[i].children[0].getBoundingClientRect()
                     let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
                     let hairsystem = new ParticleSystem(two, origin, superLogo.children[i], i)
-                    hairsystem.setID("super" + superLogo.children[i].id.charAt(2).toUpperCase())
+                    hairsystem.setID(superLogo.children[i].id)
                     colorClasses.push(superLogo.children[i].children[0].fill)
                     hairSystems.push(hairsystem)
-                  
+
                 }
 
-            } else if (superLogo.children[i].id.includes("anchor")) {
-
-                // let childRect = superLogo.children[i].getBoundingClientRect()
-                // let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-                // this.anchors["super" + superLogo.children[i].id.charAt(2).toUpperCase()] = origin
-                // superLogo.children[i].visible = false
-
-            } else if (superLogo.children[i].id.includes("rail")) {
-
-                let rail = superLogo.children[i].children[0]
-                rail.visible = false
-                rail.subdivide()
-                let railSystem = new RailSystem(rail, this.superLogoGroup, two)
-                railSystem.setID("super" + superLogo.children[i].id.charAt(2).toUpperCase())
-                railSystems.push(railSystem)
-
-            } else if (superLogo.children[i].id.includes("base")) {
-
-                bases.push(superLogo.children[i])
-                // superLogo.children[i].fill = "#02f768"
-                //     superLogo.children[i].stroke = "#02f768"
-
+            } else if (superLogo.children[i].id.includes("eye")){
+                this.eye = superLogo.children[i]
+                console.log(this.eye)
+                // this.eye.scale.y = 0.1
+                   
             }
         }
     }
 
-    const loadBeast = () => {
-        //Load Beast SVG
-        var beastsvg = document.querySelector("svg#beast");
-        beastsvg.style.display = "none";
 
-        this.beastLogo = two.interpret(beastsvg);
-        this.beastLogo.center()
-        two.remove(this.beastLogo)
 
-        this.beastLogoGroup.add(this.beastLogo)
-
-        var rect = this.beastLogo.getBoundingClientRect();
-        this.beastLogoRect = new Two.Rectangle(rect.left + rect.width / 2, rect.top + rect.height / 2, rect.width, rect.height)
-        this.beastLogoRect.stroke = "#ffffff"
-        this.beastLogoRect.fill = "rgba(0,0,0,0)"
-        rects.push(rect)
-
-        // /// Same for Beast Logo
-        for (let i = 0; i < this.beastLogo.children.length; i++) {
-
-            //  Check if it is a hairs patch
-            if (this.beastLogo.children[i].id.includes("hair")) {
-                if (this.beastLogo.children[i].children[0]) {
-                    // this.beastLogo.children[i].fill = "#02f768"
-                    // this.beastLogo.children[i].stroke = "#02f768"
-
-                    let childRect = this.beastLogo.children[i].children[0].getBoundingClientRect()
-                    let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-                    let hairsystem = new ParticleSystem(two, origin, this.beastLogo.children[i], i)
-                    hairsystem.setID("beast" + this.beastLogo.children[i].id.charAt(2).toUpperCase())
-                    colorClasses.push(this.beastLogo.children[i].children[0].fill)
-                    hairSystems.push(hairsystem)
-            
-                }
-            } else if (this.beastLogo.children[i].id.includes("anchor")) {
-
-                // let childRect = this.beastLogo.children[i].getBoundingClientRect()
-                // let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-
-                // this.anchors["beast" + this.beastLogo.children[i].id.charAt(2).toUpperCase()] = origin.multiplyScalar(0.2 + two.width/2000)
-                // this.beastLogo.children[i].visible = false
-
-            } else if (this.beastLogo.children[i].id.includes("rail")) {
-
-                let rail = this.beastLogo.children[i].children[0]
-                rail.visible = false
-                rail.subdivide()
-                let railSystem = new RailSystem(rail, this.beastLogoGroup, two)
-                railSystem.setID("beast" + this.beastLogo.children[i].id.charAt(2).toUpperCase())
-                railSystems.push(railSystem)
-
-            } else if (this.beastLogo.children[i].id.includes("base")) {
-
-                bases.push(this.beastLogo.children[i])
-                // this.beastLogo.children[i].fill = "#02f768"
-                //         hair.path.stroke = "#02f768""
-
-            }
-        }
-    }
-
-    // loadSuper()
-    loadBeast()
+    loadCyclops()
 
 
 
@@ -218,10 +143,9 @@ export default function TwoJSManager() {
             this.influenceRadius = two.width / 5
 
             this.superLogoGroup.scale = 0.3 + two.width / 2000
-            this.beastLogoGroup.scale = 0.3 + two.width / 2000
             // this.beastLogoGroup.translation.set(0,this.beastLogoRect.height / 3 * this.beastLogoGroup.scale)
             // this.superLogoGroup.translation.set(-30 * this.beastLogo.scale,  -this.superLogoRect.height / 3 * this.superLogoGroup.scale)
-            
+
 
 
 
@@ -229,82 +153,39 @@ export default function TwoJSManager() {
         } else {
             this.superLogoGroup.translation.y = 0
             this.superLogoGroup.scale = 0.5 + two.width / 3000
-            this.beastLogoGroup.scale = 0.5 + two.width / 3000
-            // this.beastLogoGroup.translation.x = this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
-            // this.beastLogoGroup.translation.y = 0
 
-            // this.superLogoGroup.translation.y = 0
-
-            // this.superLogoGroup.translation.x = -this.beastLogoRect.width / 2.75 * this.beastLogoGroup.scale
-            // this.influenceRadius = two.width/10
-            this.influenceRadius = two.width / 1
+            this.influenceRadius = two.width / 20
 
         }
 
 
         // // Anchors resize
-        // this.superLogoGroup.children[0].children.forEach((group) => {
-        //     if (group.id.includes("anchor")) {
-        //         let childRect = group.children[0].getBoundingClientRect()
-        //         let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-
-        //         // origin.normalize()
-        //         this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
-
-        //         if(!this.resized) {
-        //             origin.multiplyScalar(this.superLogoGroup.scale)
-
-        //             origin.addSelf(this.superLogoGroup.translation)
-
-        //         }  else {
-        //             origin.subSelf(two.width/2,two.height/2)
-        //             this.angleAnchors["super" + group.id.charAt(2).toUpperCase()] = origin.clone()
-
-           
-
-        //         }
-
-        //         this.anchors["super" + group.id.charAt(2).toUpperCase()] = origin
-        //         group.visible = false
-
-             
-
-        //     }
-        // })
-
         this.beastLogoGroup.children[0].children.forEach((group) => {
-            if (group.id.includes("anchor")) {
+            if (anchorlist.includes(group.id) ) {
                 let childRect = group.children[0].getBoundingClientRect()
-                group.visible = false
                 let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-                this.angleAnchors["beast" + group.id.charAt(2).toUpperCase()] = origin.clone()
+
+                // origin.normalize()
+                this.angleAnchors[group.id] = origin.clone()
 
                 if(!this.resized) {
                     origin.multiplyScalar(this.beastLogoGroup.scale)
 
                     origin.addSelf(this.beastLogoGroup.translation)
 
-                } else {
+                }  else {
                     origin.subSelf(two.width/2,two.height/2)
-                    
-                    // let rect = new Two.Rectangle(origin.x, origin.y, childRect.width, childRect.height)
-                    // rect.fill = "red"
-                    // this.superLogoGroup.add(rect)
+                    this.angleAnchors[group.id] = origin.clone()
+
+
 
                 }
 
-                this.anchors["beast" + group.id.charAt(2).toUpperCase()] = origin
+                this.anchors[group.id] = origin
+                group.visible = false
 
 
 
-            }
-        })
-
-
-        railSystems.forEach((rail) => {
-            if(!this.resized) {
-
-            rail.resize();
             }
         })
 
@@ -315,58 +196,32 @@ export default function TwoJSManager() {
 
             let childRect = hair.path.getBoundingClientRect()
             let origin = new Two.Vector(childRect.left + childRect.width / 2, childRect.top + childRect.height / 2)
-            if (hair.path.id.charAt(0) === "S") {
-                console.log("S")
-                if(!this.resized) {
-                    origin = origin.multiplyScalar(this.superLogoGroup.scale)
-                    origin.addSelf(this.superLogoGroup.translation)
 
-                }  else {
-                    origin.subSelf(two.width/2,two.height/2)
 
-                
+            // if (!this.resized) {
+            //     origin = origin.multiplyScalar(this.beastLogoGroup.scale)
+            //     origin.addSelf(this.beastLogoGroup.translation)
 
-                }
-             
-                if(two.width>1024) {
-                    this.influenceRadius = two.width/6
-                    hair.resize(two.width/8, origin, this.superLogoGroup.scale)
-    
-                } else {
-                    this.influenceRadius = two.width/4
-    
-                    hair.resize(two.width/6, origin, this.superLogoGroup.scale)
-    
-                }
+            // } else {
+            //     origin.subSelf(two.width / 2, two.height / 2)
 
+
+
+            // }
+
+            if (two.width > 1024) {
+                this.influenceRadius = two.width / 6
+                hair.resize(two.width / 8, origin, this.beastLogoGroup.scale)
 
             } else {
-                console.log("B")
+                this.influenceRadius = two.width / 4
 
-                if(!this.resized) {
-                    origin = origin.multiplyScalar(this.beastLogoGroup.scale)
-                    origin.addSelf(this.beastLogoGroup.translation)
-
-                }  else {
-                    origin.subSelf(two.width/2,two.height/2)
-
-                
-
-                }
-
-                if(two.width>1024) {
-                    this.influenceRadius = two.width/6
-                    hair.resize(two.width/8, origin, this.beastLogoGroup.scale)
-    
-                } else {
-                    this.influenceRadius = two.width/4
-    
-                    hair.resize(two.width/6, origin, this.beastLogoGroup.scale)
-    
-                }
+                hair.resize(two.width / 6, origin, this.beastLogoGroup.scale)
 
             }
-           
+
+
+
         })
 
 
@@ -400,7 +255,7 @@ export default function TwoJSManager() {
 
     two.bind("update", (frameCount, timeDelta) => {
 
-      
+
         if (!frameCount) {
             return
         }
@@ -408,7 +263,7 @@ export default function TwoJSManager() {
         elapsed += timeDelta;
 
         // console.log(frameCount)
-            this.particleBackground.run(timeDelta, this.mouse)
+        this.particleBackground.run(timeDelta, this.mouse)
 
         // if (frameCount % 3 === 0 && two.width>1024) {
         //     // railSystems.forEach((rail, i) => {
@@ -421,7 +276,10 @@ export default function TwoJSManager() {
         // }
 
 
+        // this.eye.scale.x = Math.abs(Math.sin(elapsed*0.1))
 
+      
+        // this.eye.scale.y= Math.abs(Math.sin(elapsed*0.1))
 
 
 
@@ -488,7 +346,7 @@ export default function TwoJSManager() {
                 wiggle: this.wiggle,
                 retreat: this.retreat
             });
-            hairSystems[i].updateMouseLine(this.anchors[hairSystems[i].id], this.mouse)
+            hairSystems[i].updateMouseLine(this.angleAnchors, this.mouse)
 
 
 
@@ -499,8 +357,8 @@ export default function TwoJSManager() {
         ball.radius = this.influenceRadius
 
 
-        this.beastLogoGroup.translation.x =  this.mouse.x*0.005
-        this.beastLogoGroup.translation.y =  this.mouse.y*0.005
+        this.beastLogoGroup.translation.x = this.mouse.x * 0.005
+        this.beastLogoGroup.translation.y = this.mouse.y * 0.005
 
     });
 

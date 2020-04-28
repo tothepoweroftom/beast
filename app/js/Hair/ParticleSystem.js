@@ -74,8 +74,25 @@ export default class ParticleSystem {
 
     }
 
-    updateMouseLine(anchor, mouse) {
-        this.anchor = anchor
+    updateMouseLine(anchors, mouse) {
+        // console.log(this.id)
+
+        if(this.id==="hair-00"){
+            this.anchor = anchors["leg"]
+
+        } else if (this.id==="hair-01") {
+            this.anchor = anchors["leg"]
+
+        } else if (this.id==="hair-02") {
+            this.anchor = anchors["head"]
+
+        } else if (this.id==="hair-03") {
+            this.anchor = anchors["leftarm"]
+
+        } else if (this.id==="hair-04") {
+            this.anchor = anchors["rightarm"]
+
+        } 
 
 
         // if (anchor) {
@@ -201,7 +218,7 @@ export default class ParticleSystem {
 
 
     innerCircleBehaviour(mouse, time, wiggle) {
-        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
+        for (let i = 3; i < this.displayed.vertices.length - 3; i++) {
 
             if ((i) % 2 != 0) {
 
@@ -219,8 +236,8 @@ export default class ParticleSystem {
                 o.subSelf(this.shapeOrigin)
 
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * wiggle), this.oldPos[i].x, 0.85);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * wiggle), this.oldPos[i].y, 0.85);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01) * wiggle), this.oldPos[i].x, 0.085);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01) * wiggle), this.oldPos[i].y, 0.085);
 
                 this.oldPos[i] = v
 
@@ -236,7 +253,7 @@ export default class ParticleSystem {
 
 
     standbyBehaviour(mouse, time, wiggle) {
-        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
+        for (let i = 3; i < this.displayed.vertices.length - 3; i++) {
 
             if ((i) % 2 != 0) {
 
@@ -249,13 +266,13 @@ export default class ParticleSystem {
 
                 this.lineDistance = this.clamp(this.lineDistance, 0, 40)
                 this.lineDistance = this.map_range(this.lineDistance, 0, 40, 90, 0)
-                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstant * 0.125) * Math.sin(this.lineDistance * conversion)
+                this.amplitude = this.clamp(mouse.distanceTo(o), 0, this.growthConstant * 0.0025) * Math.sin(this.lineDistance * conversion)
 
                 o.subSelf(this.shapeOrigin)
 
 
-                v.x = this.lerp(o.x + (this.amplitude + this.difference) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * wiggle), this.oldPos[i].x, 0.9);
-                v.y = this.lerp(o.y + (this.amplitude + this.difference) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * wiggle), this.oldPos[i].y, 0.9);
+                v.x = this.lerp(o.x + (this.amplitude + this.difference*10) * Math.cos(this.theta + noise.noise2(time * 0.01 * v.x, time * v.x * 0.01 * this.amplitude) * wiggle), this.oldPos[i].x, 0.29);
+                v.y = this.lerp(o.y + (this.amplitude + this.difference*10) * Math.sin(this.theta + noise.noise2(time * 0.01 * v.y, time * v.y * 0.01 * this.amplitude) * wiggle), this.oldPos[i].y, 0.29);
 
                 this.oldPos[i] = v
 
@@ -270,7 +287,7 @@ export default class ParticleSystem {
 
 
     noMouse(mouse, retreat, time) {
-        for (let i = 1; i < this.displayed.vertices.length - 1; i++) {
+        for (let i = 3; i < this.displayed.vertices.length - 3; i++) {
 
             if ((i) % 2 != 0) {
 
@@ -282,8 +299,8 @@ export default class ParticleSystem {
 
 
 
-                v.x = this.lerp(o.x, this.oldPos[i].x, retreat);
-                v.y = this.lerp(o.y, this.oldPos[i].y, retreat);
+                v.x = this.lerp(o.x, this.oldPos[i].x + this.difference*10, 0.5);
+                v.y = this.lerp(o.y, this.oldPos[i].y + this.difference*10, 0.5);
 
                 this.oldPos[i] = v
 
@@ -325,7 +342,7 @@ export default class ParticleSystem {
             this.theta = (this.theta > 0 ? this.theta : (2 * Math.PI + this.theta))
 
 
-            if (this.mouseActive) {
+            // if (this.mouseActive) {
                 let d = mouse.distanceTo(this.shapeOrigin)
 
                 // -=-==-=-=--=-=-=-=-=-==-=-==--=-==--==- If mouse is close to the centroid -=--=-=============================== 
@@ -339,13 +356,13 @@ export default class ParticleSystem {
                     this.standbyBehaviour(mouse, time, controls.wiggle)
 
                 }
-            } else {
+            // } else {
 
-                this.noMouse(mouse, controls.retreat, time)
+            //     this.noMouse(mouse, controls.retreat, time)
 
 
 
-            }
+            // }
         }
 
 

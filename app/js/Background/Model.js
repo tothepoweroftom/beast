@@ -26,11 +26,11 @@ export default function Model(world, two, particleGroup) {
 		self.publish('spawn', agent);
 	}
 
-	this.step = function(dt) {
+	this.step = function(dt, mouse) {
 		self.world.step(dt);
 
 		self.world.agents.forEach(function(agent) {
-			agent.step(dt);
+			agent.step(dt, mouse);
 		});
 
 		self.publish('step', dt);
